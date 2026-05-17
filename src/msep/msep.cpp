@@ -159,18 +159,6 @@ public:
         int sample_every = 1
     ) 
     {
-        if (n_samples < 0) 
-        {
-            throw std::invalid_argument("n_samples must be nonnegative");
-        }
-        if (sample_every < 0) 
-        {
-            throw std::invalid_argument("sample_every must be nonnegative");
-        }
-        if (species < 0 || species >= dimension) 
-        {
-            throw std::invalid_argument("species index out of range");
-        }
 
         std::vector<int> state = chain;
         const double q = 2.0 * std::acos(-1.0) / static_cast<double>(length);
@@ -322,7 +310,7 @@ private:
         std::vector<double> coords(static_cast<std::size_t>(dimension) * path_dim, 0.0);
 
         // Coordinate of projected e_i along basis vector b_k. Since b_k lies in the
-        // plane sum(x_i)=0, dot(e_i - n_hat/dot correction, b_k) = dot(e_i, b_k).
+        // plane sum(x_i)=0, dot(e_i - n_hat/dot correction, b_k) = dot(e_i, b_k)
         for (int species = 0; species < dimension; ++species) 
         {
             double row_norm_sq = 0.0;
