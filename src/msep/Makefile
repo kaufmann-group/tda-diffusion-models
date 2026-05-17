@@ -17,4 +17,4 @@ all:
 	$(CXX) $(CXXFLAGS) $(PYBIND11_INCLUDES) $(SRC) $(LDFLAGS) -o $(TARGET)
 
 clean:
-	rm -f *.so
+	rm -f $(TARGET)
