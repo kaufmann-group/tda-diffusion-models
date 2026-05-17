@@ -19,27 +19,21 @@ namespace py = pybind11;
 
 namespace {
 
-constexpr unsigned int default_seed() {
-    // sum("Topological Data Analysis!".encode()) = 2504
-    return 2504u;
-}
-
-double rate_at(const std::vector<double>& rates, int d, int alpha, int beta) {
+double rate_at(const std::vector<double>& rates, int d, int alpha, int beta)
+ {
     return rates[static_cast<std::size_t>(alpha) * d + beta];
 }
 
-std::vector<double> flatten_rates(py::array_t<double, py::array::c_style | py::array::forcecast> rates, int d) {
+std::vector<double> flatten_rates(py::array_t<double, py::array::c_style | py::array::forcecast> rates, int d)
+ {
     py::buffer_info info = rates.request();
-    if (info.ndim != 2 || info.shape[0] != d || info.shape[1] != d) {
+    if (info.ndim != 2 || info.shape[0] != d || info.shape[1] != d)
+     {
         throw std::invalid_argument("rates_matrix must be a 2D array with shape (dimension, dimension)");
     }
 
     const auto* ptr = static_cast<const double*>(info.ptr);
     return std::vector<double>(ptr, ptr + static_cast<std::size_t>(d) * d);
-}
-
-bool is_close(double a, double b, double rtol = 1e-5, double atol = 1e-8) {
-    return std::abs(a - b) <= atol + rtol * std::abs(b);
 }
 
 } // namespace
@@ -61,46 +55,50 @@ public:
         const std::vector<double>& dens,
         py::array_t<double, py::array::c_style | py::array::forcecast> rates,
         int len,
-        unsigned int seed = default_seed(),
-        bool do_shuffle = true,
-        bool check_pairwise_balance_flag = true
+        unsigned int seed,
+        bool do_shuffle = true
     )
         : dimension(dim),
           density(dens),
           rates_matrix(flatten_rates(rates, dim)),
           length(len),
           max_rate(1.0),
-          rng(seed) {
-
-        validate_inputs(check_pairwise_balance_flag);
-
+          rng(seed) 
+    {
         max_rate = *std::max_element(rates_matrix.begin(), rates_matrix.end());
-        if (max_rate == 0.0) {
+        if (max_rate == 0.0) 
+        {
             max_rate = 1.0;  // avoid division by zero; all proposed swaps are rejected
         }
 
         proj_vectors = build_projected_vectors();
         chain = build_chain();
 
-        if (do_shuffle) {
+        if (do_shuffle) 
+        {
             shuffle_chain(chain);
         }
     }
 
-    void update() {
+    void update() 
+    {
         update_state(chain);
     }
 
-    py::array_t<int> simulate(int steps = 100000, bool store_history = false) {
-        if (steps < 0) {
+    py::array_t<int> simulate(int steps = 100000, bool store_history = false)
+    {
+        if (steps < 0) 
+        {
             throw std::invalid_argument("steps must be nonnegative");
         }
 
-        if (store_history) {
+        if (store_history) 
+        {
             std::vector<int> history(static_cast<std::size_t>(steps + 1) * length);
             std::copy(chain.begin(), chain.end(), history.begin());
 
-            for (int step = 1; step <= steps; ++step) {
+            for (int step = 1; step <= steps; ++step) 
+            {
                 update_state(chain);
                 std::copy(chain.begin(), chain.end(), history.begin() + static_cast<std::size_t>(step) * length);
             }
@@ -110,7 +108,8 @@ public:
             return out;
         }
 
-        for (int step = 0; step < steps; ++step) {
+        for (int step = 0; step < steps; ++step) 
+        {
             update_state(chain);
         }
 
@@ -119,27 +118,32 @@ public:
         return out;
     }
 
-    py::array_t<int> get_chain() const {
+    py::array_t<int> get_chain() const 
+    {
         py::array_t<int> out(length);
         std::copy(chain.begin(), chain.end(), static_cast<int*>(out.request().ptr));
         return out;
     }
 
-    py::array_t<double> get_projected_vectors_array() const {
+    py::array_t<double> get_projected_vectors_array() const 
+    {
         py::array_t<double> out({dimension, dimension - 1});
         std::copy(proj_vectors.begin(), proj_vectors.end(), static_cast<double*>(out.request().ptr));
         return out;
     }
 
-    py::array_t<double> get_path() const {
+    py::array_t<double> get_path() const 
+    {
         const int path_dim = dimension - 1;
         py::array_t<double> out({length + 1, path_dim});
         auto* path = static_cast<double*>(out.request().ptr);
         std::fill(path, path + static_cast<std::size_t>(length + 1) * path_dim, 0.0);
 
-        for (int i = 0; i < length; ++i) {
+        for (int i = 0; i < length; ++i) 
+        {
             const int species = chain[i];
-            for (int k = 0; k < path_dim; ++k) {
+            for (int k = 0; k < path_dim; ++k) 
+            {
                 path[static_cast<std::size_t>(i + 1) * path_dim + k] =
                     path[static_cast<std::size_t>(i) * path_dim + k] +
                     proj_vectors[static_cast<std::size_t>(species) * path_dim + k];
@@ -153,23 +157,28 @@ public:
         int n_samples = 60000,
         int species = 0,
         int sample_every = 1
-    ) {
-        if (n_samples < 0) {
+    ) 
+    {
+        if (n_samples < 0) 
+        {
             throw std::invalid_argument("n_samples must be nonnegative");
         }
-        if (sample_every < 0) {
+        if (sample_every < 0) 
+        {
             throw std::invalid_argument("sample_every must be nonnegative");
         }
-        if (species < 0 || species >= dimension) {
+        if (species < 0 || species >= dimension) 
+        {
             throw std::invalid_argument("species index out of range");
         }
 
-        std::vector<int> state = chain;  // match Python helper: do not mutate self.chain
+        std::vector<int> state = chain;
         const double q = 2.0 * std::acos(-1.0) / static_cast<double>(length);
 
         std::vector<double> cos_q(length);
         std::vector<double> sin_q(length);
-        for (int j = 0; j < length; ++j) {
+        for (int j = 0; j < length; ++j) 
+        {
             cos_q[j] = std::cos(q * j);
             sin_q[j] = std::sin(q * j);
         }
@@ -177,12 +186,15 @@ public:
         py::array_t<std::complex<double>> out(n_samples);
         auto* X = static_cast<std::complex<double>*>(out.request().ptr);
 
-        for (int n = 0; n < n_samples; ++n) {
+        for (int n = 0; n < n_samples; ++n) 
+        {
             double re = 0.0;
             double im = 0.0;
 
-            for (int j = 0; j < length; ++j) {
-                if (state[j] == species) {
+            for (int j = 0; j < length; ++j) 
+            {
+                if (state[j] == species) 
+                {
                     re += cos_q[j];
                     im += sin_q[j];
                 }
@@ -191,8 +203,10 @@ public:
             X[n] = std::complex<double>(re, im);
 
             // One sweep = length random nearest-neighbor bond proposals.
-            for (int s = 0; s < sample_every; ++s) {
-                for (int step = 0; step < length; ++step) {
+            for (int s = 0; s < sample_every; ++s) 
+            {
+                for (int step = 0; step < length; ++step) 
+                {
                     update_state(state);
                 }
             }
@@ -201,111 +215,40 @@ public:
         return out;
     }
 
-    bool check_pairwise_balance() const {
-        return check_pairwise_balance_impl(rates_matrix, dimension, true);
-    }
-
 private:
-    void validate_inputs(bool check_pairwise_balance_flag) const {
-        if (dimension < 2) {
-            throw std::invalid_argument("dimension must be at least 2");
-        }
-        if (length <= 0) {
-            throw std::invalid_argument("length must be positive");
-        }
-        if (density.size() != static_cast<std::size_t>(dimension)) {
-            throw std::invalid_argument("dimension-density mismatch");
-        }
-        if (rates_matrix.size() != static_cast<std::size_t>(dimension * dimension)) {
-            throw std::invalid_argument("rate-density mismatch");
-        }
-
-        const double density_sum = std::accumulate(density.begin(), density.end(), 0.0);
-        if (!is_close(density_sum, 1.0, 1e-12, 1e-12)) {
-            throw std::invalid_argument("density not normalized");
-        }
-
-        for (double rho : density) {
-            if (rho < 0.0) {
-                throw std::invalid_argument("densities must be nonnegative");
-            }
-        }
-        for (double r : rates_matrix) {
-            if (r < 0.0) {
-                throw std::invalid_argument("rates must be nonnegative");
-            }
-        }
-
-        int total_count = 0;
-        for (double rho : density) {
-            const double raw_count = rho * length;
-            const int count = static_cast<int>(std::llround(raw_count));
-            if (!is_close(raw_count, static_cast<double>(count), 1e-12, 1e-12)) {
-                throw std::invalid_argument("each density[i] * length must be an integer particle count");
-            }
-            total_count += count;
-        }
-        if (total_count != length) {
-            throw std::invalid_argument("density counts do not sum to length");
-        }
-
-        if (check_pairwise_balance_flag && !check_pairwise_balance_impl(rates_matrix, dimension, true)) {
-            throw std::invalid_argument("pairwise balance not imposed");
-        }
-    }
-
-    static bool check_pairwise_balance_impl(const std::vector<double>& rates, int d, bool print_failure) {
-        for (int alpha = 0; alpha < d; ++alpha) {
-            for (int beta = alpha + 1; beta < d; ++beta) {
-                for (int gamma = beta + 1; gamma < d; ++gamma) {
-                    const double lhs = rate_at(rates, d, alpha, beta)
-                                     + rate_at(rates, d, beta, gamma)
-                                     + rate_at(rates, d, gamma, alpha);
-                    const double rhs = rate_at(rates, d, beta, alpha)
-                                     + rate_at(rates, d, gamma, beta)
-                                     + rate_at(rates, d, alpha, gamma);
-
-                    if (!is_close(lhs, rhs)) {
-                        if (print_failure) {
-                            std::cout << "Balance failed for triple: ("
-                                      << alpha << ", " << beta << ", " << gamma << ")\n"
-                                      << "lhs = " << lhs << "\n"
-                                      << "rhs = " << rhs << "\n";
-                        }
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    std::vector<int> build_chain() const {
+    std::vector<int> build_chain() const 
+    {
         std::vector<int> out;
         out.reserve(length);
 
-        for (int species = 0; species < dimension; ++species) {
+        for (int species = 0; species < dimension; ++species) 
+        {
             const int count = static_cast<int>(std::llround(density[species] * length));
-            for (int i = 0; i < count; ++i) {
+            for (int i = 0; i < count; ++i) 
+            {
                 out.push_back(species);
             }
         }
 
-        if (static_cast<int>(out.size()) != length) {
+        if (static_cast<int>(out.size()) != length) 
+        {
             throw std::runtime_error("internal error while building chain");
         }
         return out;
     }
 
-    void shuffle_chain(std::vector<int>& values) {
-        for (int i = static_cast<int>(values.size()) - 1; i > 0; --i) {
+    void shuffle_chain(std::vector<int>& values) 
+    {
+        for (int i = static_cast<int>(values.size()) - 1; i > 0; --i) 
+        {
             std::uniform_int_distribution<int> dist(0, i);
             const int j = dist(rng);
             std::swap(values[i], values[j]);
         }
     }
 
-    void update_state(std::vector<int>& state) {
+    void update_state(std::vector<int>& state) 
+    {
         std::uniform_int_distribution<int> index_dist(0, length - 1);
         std::uniform_real_distribution<double> real_dist(0.0, 1.0);
 
@@ -316,27 +259,30 @@ private:
         const int beta = state[k];
         const double rate = rate_at(rates_matrix, dimension, alpha, beta);
 
-        if (real_dist(rng) < rate / max_rate) {
+        if (real_dist(rng) < rate / max_rate) 
+        {
             state[j] = beta;
             state[k] = alpha;
         }
     }
 
-    static double dot(const std::vector<double>& a, const std::vector<double>& b) {
+    static double dot(const std::vector<double>& a, const std::vector<double>& b) 
+    {
         double s = 0.0;
-        for (std::size_t i = 0; i < a.size(); ++i) {
+        for (std::size_t i = 0; i < a.size(); ++i) 
+        {
             s += a[i] * b[i];
         }
         return s;
     }
 
-    static double norm(const std::vector<double>& a) {
+    static double norm(const std::vector<double>& a) 
+    {
         return std::sqrt(dot(a, a));
     }
 
-    std::vector<std::vector<double>> build_plane_basis() const {
-        // Deterministic orthonormal basis for the hyperplane x_1 + ... + x_d = 0.
-        // Start from v_k = e_k - e_{d-1}, k=0,...,d-2, then Gram-Schmidt.
+    std::vector<std::vector<double>> build_plane_basis() const 
+    {
         std::vector<std::vector<double>> basis;
         basis.reserve(dimension - 1);
 
@@ -345,18 +291,22 @@ private:
             v[k] = 1.0;
             v[dimension - 1] = -1.0;
 
-            for (const auto& b : basis) {
+            for (const auto& b : basis) 
+            {
                 const double coeff = dot(v, b);
-                for (int i = 0; i < dimension; ++i) {
+                for (int i = 0; i < dimension; ++i) 
+                {
                     v[i] -= coeff * b[i];
                 }
             }
 
             const double n = norm(v);
-            if (n < 1e-14) {
-                throw std::runtime_error("failed to construct projection basis");
+            if (n < 1e-14) 
+            {
+                throw std::runtime_error("can't construct projection basis");
             }
-            for (double& x : v) {
+            for (double& x : v) 
+            {
                 x /= n;
             }
             basis.push_back(std::move(v));
@@ -365,24 +315,29 @@ private:
         return basis;
     }
 
-    std::vector<double> build_projected_vectors() const {
+    std::vector<double> build_projected_vectors() const 
+    {
         const int path_dim = dimension - 1;
         const auto basis = build_plane_basis();
         std::vector<double> coords(static_cast<std::size_t>(dimension) * path_dim, 0.0);
 
         // Coordinate of projected e_i along basis vector b_k. Since b_k lies in the
         // plane sum(x_i)=0, dot(e_i - n_hat/dot correction, b_k) = dot(e_i, b_k).
-        for (int species = 0; species < dimension; ++species) {
+        for (int species = 0; species < dimension; ++species) 
+        {
             double row_norm_sq = 0.0;
-            for (int k = 0; k < path_dim; ++k) {
+            for (int k = 0; k < path_dim; ++k) 
+            {
                 const double c = basis[k][species];
                 coords[static_cast<std::size_t>(species) * path_dim + k] = c;
                 row_norm_sq += c * c;
             }
 
             const double row_norm = std::sqrt(row_norm_sq);
-            if (row_norm > 1e-14) {
-                for (int k = 0; k < path_dim; ++k) {
+            if (row_norm > 1e-14) 
+            {
+                for (int k = 0; k < path_dim; ++k) 
+                {
                     coords[static_cast<std::size_t>(species) * path_dim + k] /= row_norm;
                 }
             }
@@ -399,15 +354,13 @@ PYBIND11_MODULE(msep_cpp, m) {
                       py::array_t<double, py::array::c_style | py::array::forcecast>,
                       int,
                       unsigned int,
-                      bool,
                       bool>(),
              py::arg("dimension"),
              py::arg("density"),
              py::arg("rates_matrix"),
              py::arg("length"),
-             py::arg("seed") = default_seed(),
-             py::arg("shuffle") = true,
-             py::arg("check_pairwise_balance") = true)
+             py::arg("seed"),
+             py::arg("shuffle") = true)
         .def_readonly("dimension", &MultiSpeciesExclusionProcess::dimension)
         .def_readonly("density", &MultiSpeciesExclusionProcess::density)
         .def_readonly("length", &MultiSpeciesExclusionProcess::length)
@@ -422,6 +375,5 @@ PYBIND11_MODULE(msep_cpp, m) {
         .def("fourier_time_series", &MultiSpeciesExclusionProcess::fourier_time_series,
              py::arg("n_samples") = 60000,
              py::arg("species") = 0,
-             py::arg("sample_every") = 1)
-        .def("check_pairwise_balance", &MultiSpeciesExclusionProcess::check_pairwise_balance);
+             py::arg("sample_every") = 1);
 }
