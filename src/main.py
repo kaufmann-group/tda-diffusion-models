@@ -28,6 +28,7 @@ if __name__ == "__main__":
 
     plt.figure(figsize=(6, 6))
     plt.plot(path_2d[:, 0], path_2d[:, 1], "-o", markersize=2)
+    #print(f"x: {path_2d[-1, 0]:.3f}, y: {path_2d[-1, 1]:.3f}")
     plt.axis("equal")
     plt.xlabel(r"$h_1$")
     plt.ylabel(r"$h_2$")
@@ -61,6 +62,7 @@ if __name__ == "__main__":
     fig = plt.figure(figsize=(6, 6))
     ax = fig.add_subplot(111, projection="3d")
     ax.plot(path_3d[:, 0], path_3d[:, 1], path_3d[:, 2], "-o", markersize=2)
+    #print(f"x: {path_3d[-1, 0]:.3f}, y: {path_3d[-1, 1]:.3f}, z: {path_3d[-1, 2]:.3f}")
     ax.set_xlabel(r"$h_1$")
     ax.set_ylabel(r"$h_2$")
     ax.set_zlabel(r"$h_3$")

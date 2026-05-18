@@ -144,20 +144,14 @@ public:
             const int species = chain[i];
             for (int k = 0; k < path_dim; ++k) 
             {
-                path[static_cast<std::size_t>(i + 1) * path_dim + k] =
-                    path[static_cast<std::size_t>(i) * path_dim + k] +
-                    proj_vectors[static_cast<std::size_t>(species) * path_dim + k];
+                path[static_cast<std::size_t>(i + 1) * path_dim + k] = path[static_cast<std::size_t>(i) * path_dim + k] + proj_vectors[static_cast<std::size_t>(species) * path_dim + k];
             }
         }
 
         return out;
     }
 
-    py::array_t<std::complex<double>> fourier_time_series(
-        int n_samples = 60000,
-        int species = 0,
-        int sample_every = 1
-    ) 
+    py::array_t<std::complex<double>> fourier_time_series(int n_samples = 60000, int species = 0, int sample_every = 1) 
     {
 
         std::vector<int> state = chain;
@@ -190,7 +184,6 @@ public:
 
             X[n] = std::complex<double>(re, im);
 
-            // One sweep = length random nearest-neighbor bond proposals.
             for (int s = 0; s < sample_every; ++s) 
             {
                 for (int step = 0; step < length; ++step) 

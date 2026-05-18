@@ -121,6 +121,7 @@ if __name__ == "__main__":
     solving for the critical dynamical exponent for n = 2, 3, 4, 5, 6, 7, 8, and 9 species
     """
     fig, axes = plt.subplots(4, 2, figsize=(10, 15)) 
+    fig.suptitle("the critical dynamical exponent for many species")
 
     for species_size, ax in zip(np.arange(2, 10, 1), axes.flatten()): 
         logL, logtau, fit, z = get_dynamical_critical_exponent(species_size=species_size) 
@@ -132,7 +133,7 @@ if __name__ == "__main__":
         ax.set_xlabel(r"$\log L$")
         ax.set_ylabel(r"$\log \tau(L)$")
         
-        ax.set_title(f"Size = {species_size}")
+        ax.set_title(f"species size = {species_size}")
         ax.legend()
         ax.grid(True)
 
