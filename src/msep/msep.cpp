@@ -81,36 +81,6 @@ public:
         update_state(chain);
     }
 
-    py::array_t<int> simulate(int steps = 100000, bool store_history = false)
-    {
-        if (store_history) 
-        {
-            std::vector<int> history(static_cast<std::size_t>(steps + 1) * length);
-            std::copy(chain.begin(), chain.end(), history.begin());
-
-            for (int step = 1; step <= steps; ++step) 
-            {
-                update_state(chain);
-                std::copy(chain.begin(), chain.end(), history.begin() + static_cast<std::size_t>(step) * length);
-            }
-
-            py::array_t<int> out({steps + 1, length});
-            std::copy(history.begin(), history.end(), static_cast<int*>(out.request().ptr));
-            return out;
-        } 
-        else 
-        {
-            for (int step = 0; step < steps; ++step) 
-            {
-                update_state(chain);
-            }
-
-            py::array_t<int> out(length);
-            std::copy(chain.begin(), chain.end(), static_cast<int*>(out.request().ptr));
-            return out;
-        }
-    }
-
     py::array_t<int> get_chain() const 
     {
         py::array_t<int> out(length);
@@ -125,7 +95,84 @@ public:
         return out;
     }
 
-    py::array_t<double> get_path() const 
+    /*
+    current bug in the code where when store_history and get_projection are true that first
+    the entire chain history is stored then history is looped over to eventually just output the 
+    projected paths. rewrite the code to calculate the projected paths when we update. 
+    */
+    py::array simulate(int steps = 100000, bool store_history = false, bool get_projection = false)
+    {
+        const int path_dim = dimension - 1;
+
+        if (store_history) 
+        {
+            std::vector<int> history(static_cast<std::size_t>(steps + 1) * length);
+            std::copy(chain.begin(), chain.end(), history.begin());
+
+            for (int step = 1; step <= steps; ++step) 
+            {
+                update_state(chain);
+                std::copy(chain.begin(), chain.end(), history.begin() + static_cast<std::size_t>(step) * length);
+            }
+            if (get_projection) 
+            {
+                py::array_t<double> out({steps + 1, length + 1, path_dim});
+                auto* path = static_cast<double*>(out.request().ptr);
+                std::fill(path, path + static_cast<std::size_t>(steps + 1) * (length + 1) * path_dim, 0.0);
+
+                for (int i = 0; i <= steps; ++i)
+                {
+                    for (int j = 0; j < length; ++j)
+                    {
+                        const int species = history[static_cast<std::size_t>(i) * length + j];
+                        for (int k = 0; k < path_dim; ++k) 
+                        {
+                            path[(static_cast<std::size_t>(i) * (length + 1) + (j + 1)) * path_dim + k] = path[(static_cast<std::size_t>(i) * (length + 1) + j) * path_dim + k] 
+                            + proj_vectors[static_cast<std::size_t>(species) * path_dim + k];
+                        }
+                    }
+                }
+                return out;
+            }
+            else 
+            {
+                py::array_t<int> out({steps + 1, length});
+                std::copy(history.begin(), history.end(), static_cast<int*>(out.request().ptr));
+                return out;
+            }
+        } 
+        else 
+        {
+            for (int step = 0; step < steps; ++step) 
+            {
+                update_state(chain);
+            }
+            if (get_projection)
+            {
+                py::array_t<double> out({length + 1, path_dim});
+                auto* path = static_cast<double*>(out.request().ptr);
+                std::fill(path, path + static_cast<std::size_t>(length + 1) * path_dim, 0.0);
+
+                for (int j = 0; j < length; ++j)
+                {
+                    const int species = chain[j];
+                    for (int k = 0; k < path_dim; ++k) 
+                    {
+                        path[static_cast<std::size_t>(j + 1) * path_dim + k] = path[static_cast<std::size_t>(j) * path_dim + k] + proj_vectors[static_cast<std::size_t>(species) * path_dim + k];
+                    }
+                }
+                return out;
+            }
+            else
+            {
+                py::array_t<int> out(length);
+                std::copy(chain.begin(), chain.end(), static_cast<int*>(out.request().ptr));
+                return out;
+            }
+        }
+    }
+
+    py::array_t<double> get_path_projection() const 
     {
         const int path_dim = dimension - 1;
         py::array_t<double> out({length + 1, path_dim});
@@ -339,9 +386,10 @@ PYBIND11_MODULE(msep_cpp, m) {
         .def("update", &MultiSpeciesExclusionProcess::update)
         .def("simulate", &MultiSpeciesExclusionProcess::simulate,
              py::arg("steps") = 100000,
-             py::arg("store_history") = false)
+             py::arg("store_history") = false, 
+             py::arg("get_projection") = false)
         .def("get_chain", &MultiSpeciesExclusionProcess::get_chain)
-        .def("get_path", &MultiSpeciesExclusionProcess::get_path)
+        .def("get_path_projection", &MultiSpeciesExclusionProcess::get_path_projection)
         .def("get_projected_vectors", &MultiSpeciesExclusionProcess::get_projected_vectors_array)
         .def("fourier_time_series", &MultiSpeciesExclusionProcess::fourier_time_series,
              py::arg("n_samples") = 60000,

@@ -21,7 +21,7 @@ if __name__ == "__main__":
         dtype=np.float64,
     )
 
-    asym_diffusion_2d = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix_3d, length=length, seed=2504, shuffle=True)
+    asym_diffusion_2d = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix_3d, length=length, seed=2504)
 
     asym_diffusion_2d.simulate(steps=100000)
     path_2d = asym_diffusion_2d.get_path()
@@ -54,7 +54,7 @@ if __name__ == "__main__":
         dtype=np.float64,
     )
 
-    asym_diffusion_3d = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix_4d, length=length, seed=2504, shuffle=True)
+    asym_diffusion_3d = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix_4d, length=length, seed=2504)
 
     asym_diffusion_3d.simulate(steps=100000)
     path_3d = asym_diffusion_3d.get_path()

@@ -37,7 +37,7 @@ def get_dynamical_critical_exponent(species_size):
 
         rates_matrix = np.triu(np.ones((dimension, dimension), dtype=np.float64), k=1)
 
-        process = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix, length=L, seed=2504, shuffle=True)
+        process = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix, length=L, seed=2504)
 
         X = process.fourier_time_series(n_samples=60000, species=0, sample_every=1)
         C = autocorrelation(X)
