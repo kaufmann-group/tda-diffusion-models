@@ -58,7 +58,7 @@ def tda_observables(point_cloud, r=1.5, epsilon=0.2, max_edge_length=5.0):
 """
 runs none exclusion process trajectory then compute tda observables at certain times
 """
-def run_single_tda_trajectory(seed, steps, L, skip, rates_matrix, r, epsilon, max_edge_length):
+def single_tda_trajectory(seed, steps, L, skip, rates_matrix, r, epsilon, max_edge_length):
     
     model = MultiSpeciesExclusionProcess(dimension=3, density=[1/3, 1/3, 1/3], rates_matrix=rates_matrix, length=L, seed=seed, shuffle=False)
     path_history = model.simulate(steps=steps, store_history=True, get_projection=True)
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
         print(f"running ensemble number: {run + 1}, seed={seed}")
 
-        beta_1_values, p_max_values, p_total_values, n_epsilon_values = run_single_tda_trajectory(seed=seed, steps=steps, L=L, skip=skip, rates_matrix=rates_matrix, r=r, epsilon=epsilon, max_edge_length=max_edge_length)
+        beta_1_values, p_max_values, p_total_values, n_epsilon_values = single_tda_trajectory(seed=seed, steps=steps, L=L, skip=skip, rates_matrix=rates_matrix, r=r, epsilon=epsilon, max_edge_length=max_edge_length)
         
         beta_1_ensemble.append(beta_1_values)
         p_max_ensemble.append(p_max_values)
