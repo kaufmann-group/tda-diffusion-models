@@ -8,8 +8,21 @@ import matplotlib.pyplot as plt
 """
 tda for the 2D height path of the three species exclusion process. note that for each
 snapshot the clique complex is made then the h1 persistence intervals are calculated then
-beta_1(r,t), max h1 persistence, total h1 persistance and number of h1 looks with persistance 
-over some epsilon are averaged over independent ensembles.
+the following statistics are averaged over some N independent ensembles:
+
+note that:
+
+<beta_1> = the ensemble averaged number of loops alive at the fixed filtration scale r 
+    at scale r = 1.5 how many loops does the projected path typically have at time?
+
+<P_max> = the ensemble average of the largest h1 persistence in each snapshot
+    what is the strength of the most prominent loop in the projected path at time t?
+
+<P_tot> = the ensemble average of the sum of all h1 bar lengths
+    how much total loop structure exists in the projected path at time?
+
+<N_e> = the ensemble averaged number of h1 loops whose persistence is larger than epsilon
+    how many loops are significant enough to survive beyond the noise threshold epsilon? 
 """
 
 """
@@ -152,5 +165,5 @@ if __name__ == "__main__":
     axes[3].set_xlabel("monte carlo steps")
 
     plt.tight_layout()
-    plt.savefig("figures/tda_ensemble_statistics.png", dpi=300)
+    plt.savefig("figures/tda_ensemble_fast_statistics.png", dpi=300)
     plt.show()
