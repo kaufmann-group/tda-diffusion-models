@@ -10,7 +10,7 @@ if __name__ == "__main__":
     """
     dimension = 3
     density = [1/3, 1/3, 1/3]
-    length = 300
+    length = 30
 
     rates_matrix_3d = np.array(
         [
@@ -24,16 +24,40 @@ if __name__ == "__main__":
     asym_diffusion_2d = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix_3d, length=length, seed=2504)
 
     asym_diffusion_2d.simulate(steps=100000)
-    path_2d = asym_diffusion_2d.get_path()
+    path_2d = asym_diffusion_2d.get_path_projection()
 
-    plt.figure(figsize=(6, 6))
-    plt.plot(path_2d[:, 0], path_2d[:, 1], "-o", markersize=2)
-    #print(f"x: {path_2d[-1, 0]:.3f}, y: {path_2d[-1, 1]:.3f}")
-    plt.axis("equal")
-    plt.xlabel(r"$h_1$")
-    plt.ylabel(r"$h_2$")
-    plt.title("projected directed polymer path, d = 3")
+    chain = asym_diffusion_2d.get_chain()
+    chain_vectors = np.cumsum(np.eye(3)[::-1][chain], axis=0)
+    
+    fig = plt.figure(figsize=(12, 5))
 
+    ax1 = fig.add_subplot(121, projection="3d")
+    ax1.plot(chain_vectors[:, 0], chain_vectors[:, 1], chain_vectors[:, 2], "-o", markersize=2)
+    ax1.set_xlabel("species 0")
+    ax1.set_ylabel("species 1")
+    ax1.set_zlabel("species 2")
+    ax1.set_title("3d polymer chain")
+
+    center = chain_vectors.mean(axis=0)
+    c = center.sum()  
+
+    x = np.linspace(chain_vectors[:, 0].min(), chain_vectors[:, 0].max(), 10)
+    y = np.linspace(chain_vectors[:, 1].min(), chain_vectors[:, 1].max(), 10)
+    X, Y = np.meshgrid(x, y)
+    Z = c - X - Y
+
+    ax1.plot_surface(X, Y, Z, alpha=0.25, color="orange", edgecolor="none")
+    ax1.view_init(elev=25, azim=-60)
+    ax1.set_box_aspect((1, 1, 1))
+
+    ax2 = fig.add_subplot(122)
+    ax2.plot(path_2d[:, 0], path_2d[:, 1], "-o", markersize=2)
+    ax2.set_aspect("equal") 
+    ax2.set_xlabel(r"$h_1$")
+    ax2.set_ylabel(r"$h_2$")
+    ax2.set_title("Projected Directed Polymer Path, d = 3")
+
+    plt.tight_layout()
     plt.savefig("figures/projected_directed_polymer_3d.png", dpi=300)
     plt.show()
 
@@ -57,7 +81,7 @@ if __name__ == "__main__":
     asym_diffusion_3d = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix_4d, length=length, seed=2504)
 
     asym_diffusion_3d.simulate(steps=100000)
-    path_3d = asym_diffusion_3d.get_path()
+    path_3d = asym_diffusion_3d.get_path_projection()
 
     fig = plt.figure(figsize=(6, 6))
     ax = fig.add_subplot(111, projection="3d")
