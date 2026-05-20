@@ -3,16 +3,24 @@ from msep.msep_cpp import MultiSpeciesExclusionProcess
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider
 
 if __name__ == "__main__":
+
     """
-    dimension 3 case: projects onto a plane.
+    simple demonstration of three species polymer chain
     """
     dimension = 3
     density = [1/3, 1/3, 1/3]
+<<<<<<< HEAD
     length = 300
 # The diagonal is zero, and the off-diagonal entries are positive, which means that the particles have a tendency to move in a certain direction, creating an asymmetry in the diffusion process. 
 # The specific values of the rates can influence the shape and behavior of the projected path, leading to interesting patterns in the resulting directed polymer path.
+=======
+    length = 30
+    max_simulation_steps = 100
+
+>>>>>>> 2fb6a5b5e0742cb06a93b0dffcf7b6a260243ade
     rates_matrix_3d = np.array(
         [
             [0.0, 2.0, 2.0],
@@ -22,19 +30,122 @@ if __name__ == "__main__":
         dtype=np.float64,
     )
 
+    ad_chain1 = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix_3d, length=length, seed=2504, shuffle=False)
+    history = ad_chain1.simulate(steps=max_simulation_steps, store_history=True, get_projection=False)
+    
+    ad_chain2 = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix_3d, length=length, seed=2504, shuffle=False)
+    proj_history = ad_chain2.simulate(steps=max_simulation_steps, store_history=True, get_projection=True)
+
+    fig_1 = plt.figure(figsize=(12, 5))
+    plt.subplots_adjust(bottom=0.2)
+
+    ax1_1 = fig_1.add_subplot(121, projection="3d")
+    ax2_1 = fig_1.add_subplot(122)
+
+    n_frames = len(history)
+
+    chain_history = np.empty((n_frames, history.shape[1] + 1, 3), dtype=float)
+
+    for i in range(n_frames):
+        steps_3d = np.eye(3)[history[i]]
+
+        chain_history[i, 0] = 0.0
+        chain_history[i, 1:] = np.cumsum(steps_3d, axis=0)
+
+    x_min, x_max = chain_history[:, :, 0].min(), chain_history[:, :, 0].max()
+    y_min, y_max = chain_history[:, :, 1].min(), chain_history[:, :, 1].max()
+    z_min, z_max = chain_history[:, :, 2].min(), chain_history[:, :, 2].max()
+
+    h1_min, h1_max = proj_history[:, :, 0].min(), proj_history[:, :, 0].max()
+    h2_min, h2_max = proj_history[:, :, 1].min(), proj_history[:, :, 1].max()
+
+    chain0 = chain_history[0]
+
+    line3d, = ax1_1.plot(chain0[:, 0], chain0[:, 1], chain0[:, 2], "-o", markersize=2)
+    line2d, = ax2_1.plot(proj_history[0, :, 0], proj_history[0, :, 1], "-o", markersize=2)
+
+    ax1_1.set_xlabel("species 0")
+    ax1_1.set_ylabel("species 1")
+    ax1_1.set_zlabel("species 2")
+    ax1_1.set_title("3d polymer chain")
+
+    ax2_1.set_aspect("equal")
+    ax2_1.set_xlabel(r"$h_1$")
+    ax2_1.set_ylabel(r"$h_2$")
+    ax2_1.set_title("projected polymer path d = 3")
+
+    ax1_1.set_xlim(x_min, x_max)
+    ax1_1.set_ylim(y_min, y_max)
+    ax1_1.set_zlim(z_min, z_max)
+
+    ax2_1.set_xlim(h1_min, h1_max)
+    ax2_1.set_ylim(h2_min, h2_max)
+
+    ax1_1.set_box_aspect((x_max - x_min, y_max - y_min, z_max - z_min))
+    ax1_1.plot([0, 10], [0, 10], [0, 10], "k-o")
+
+    def update(val):
+        i = int(time_slider.val)
+
+        chain = chain_history[i]
+
+        line3d.set_data(chain[:, 0], chain[:, 1])
+        line3d.set_3d_properties(chain[:, 2])
+
+        line2d.set_data(proj_history[i, :, 0], proj_history[i, :, 1])
+        fig_1.canvas.draw_idle()
+
+    slider_ax = plt.axes([0.25, 0.05, 0.5, 0.03])
+
+    time_slider = Slider(ax=slider_ax, label="simulation time", valmin=0, valmax=n_frames - 1, valinit=0, valfmt="%d", valstep=1)
+
+    time_slider.on_changed(update)
+
+    update(0)
+    plt.show()
+
+    """
+    dimension three case: projects onto a plane.
+    """
+    length = 300
+
     asym_diffusion_2d = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix_3d, length=length, seed=2504)
 
     asym_diffusion_2d.simulate(steps=100000)
     path_2d = asym_diffusion_2d.get_path_projection()
 
-    plt.figure(figsize=(6, 6))
-    plt.plot(path_2d[:, 0], path_2d[:, 1], "-o", markersize=2)
-    #print(f"x: {path_2d[-1, 0]:.3f}, y: {path_2d[-1, 1]:.3f}")
-    plt.axis("equal")
-    plt.xlabel(r"$h_1$")
-    plt.ylabel(r"$h_2$")
-    plt.title("projected directed polymer path, d = 3")
+    chain = asym_diffusion_2d.get_chain()
+    chain_vectors = np.cumsum(np.eye(3)[::-1][chain], axis=0)
+    
+    fig_2 = plt.figure(figsize=(12, 5))
 
+    ax1_2 = fig_2.add_subplot(121, projection="3d")
+    ax1_2.plot(chain_vectors[:, 0], chain_vectors[:, 1], chain_vectors[:, 2], "-o", markersize=2)
+    ax1_2.set_xlabel("species 0")
+    ax1_2.set_ylabel("species 1")
+    ax1_2.set_zlabel("species 2")
+    ax1_2.set_title("3d polymer chain")
+
+    center = chain_vectors.mean(axis=0)
+    c = center.sum()  
+
+    x = np.linspace(chain_vectors[:, 0].min(), chain_vectors[:, 0].max(), 10)
+    y = np.linspace(chain_vectors[:, 1].min(), chain_vectors[:, 1].max(), 10)
+    X, Y = np.meshgrid(x, y)
+    Z = c - X - Y
+
+    ax1_2.plot_surface(X, Y, Z, alpha=0.25, color="orange", edgecolor="none")
+    ax1_2.view_init(elev=25, azim=-60)
+    ax1_2.set_box_aspect((1, 1, 1))
+
+    ax2 = fig_2.add_subplot(122)
+    ax2.plot(path_2d[:, 0], path_2d[:, 1], "-o", markersize=2)
+    ax2.set_aspect("equal") 
+    ax2.set_xlabel(r"$h_1$")
+    ax2.set_ylabel(r"$h_2$")
+    ax2.set_title("Projected Directed Polymer Path, d = 3")
+
+    plt.tight_layout()
     plt.savefig("figures/projected_directed_polymer_3d.png", dpi=300)
     plt.show()
 

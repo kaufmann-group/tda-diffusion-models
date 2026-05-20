@@ -6,33 +6,15 @@ import matplotlib.pyplot as plt
 
 
 """
-tda for the 2D height path of the three species exclusion process. note that for each
-snapshot the clique complex is made then the h1 persistence intervals are calculated then
-the following statistics are averaged over some N independent ensembles:
-
-note that:
-
-<beta_1> = the ensemble averaged number of loops alive at the fixed filtration scale r 
-    at scale r = 1.5 how many loops does the projected path typically have at time?
-
-<P_max> = the ensemble average of the largest h1 persistence in each snapshot
-    what is the strength of the most prominent loop in the projected path at time t?
-
-<P_tot> = the ensemble average of the sum of all h1 bar lengths
-    how much total loop structure exists in the projected path at time?
-
-<N_e> = the ensemble averaged number of h1 loops whose persistence is larger than epsilon
-    how many loops are significant enough to survive beyond the noise threshold epsilon? 
-"""
-
-"""
 computes tda observables from one 2d projected path snapshot ... 
 """
+
 def tda_observables(point_cloud, r=1.5, epsilon=0.2, max_edge_length=5.0):
     # removes duplicate points ... 
     point_cloud = np.unique(point_cloud, axis=0)
 
     if point_cloud.shape[0] < 3:
+        print("went :)")
         return 0, 0.0, 0.0, 0
 
     rips = gd.RipsComplex(points=point_cloud, max_edge_length=max_edge_length)
@@ -80,7 +62,7 @@ def single_tda_trajectory(seed, steps, L, skip, rates_matrix, r, epsilon, max_ed
 
     beta_1_values, p_max_values, p_total_values, n_epsilon_values = [], [], [], []
 
-    for i, path in enumerate(saved_paths):
+    for path in saved_paths:
         beta_1, p_max, p_total, n_epsilon = tda_observables(path, r=r, epsilon=epsilon, max_edge_length=max_edge_length)
 
         beta_1_values.append(beta_1)
@@ -90,11 +72,24 @@ def single_tda_trajectory(seed, steps, L, skip, rates_matrix, r, epsilon, max_ed
 
     return np.array(beta_1_values), np.array(p_max_values), np.array(p_total_values), np.array(n_epsilon_values)
 
-
 if __name__ == "__main__":
-    steps = 100000
+    """
+    <beta_1> = the ensemble averaged number of loops alive at the fixed filtration scale r 
+        at scale r = 1.5 how many loops does the projected path typically have at time?
+
+    <P_max> = the ensemble average of the largest h1 persistence in each snapshot
+        what is the strength of the most prominent loop in the projected path at time t?
+
+    <P_tot> = the ensemble average of the sum of all h1 bar lengths
+        how much total loop structure exists in the projected path at time?
+
+    <N_e> = the ensemble averaged number of h1 loops whose persistence is larger than epsilon
+        how many loops are significant enough to survive beyond the noise threshold epsilon? 
+    """
+
+    steps = 35000
     L = 300
-    skip = 1000
+    skip = 10
     N_runs = 50
 
     r = 1.5
@@ -110,13 +105,11 @@ if __name__ == "__main__":
         dtype=np.float64,
     )
 
-    saved_times = np.arange(0, steps + 1, skip)
+    sampled_times = np.arange(0, steps + 1, skip)
     beta_1_ensemble, p_max_ensemble, p_total_ensemble, n_epsilon_ensemble = [], [], [], []
 
-    base_seed = 2504
-
     for run in range(N_runs):
-        seed = base_seed + run
+        seed = 2504 + run
 
         print(f"running ensemble number: {run + 1}, seed={seed}")
 
@@ -146,24 +139,29 @@ if __name__ == "__main__":
 
     fig, axes = plt.subplots(4, 1, figsize=(8, 10), sharex=True)
 
-    axes[0].plot(saved_times, beta_1_mean)
-    axes[0].fill_between(saved_times, beta_1_mean - beta_1_sem, beta_1_mean + beta_1_sem, alpha=0.3)
+    axes[0].plot(sampled_times, beta_1_mean)
+    axes[0].fill_between(sampled_times, beta_1_mean - beta_1_sem, beta_1_mean + beta_1_sem, alpha=0.3)
     axes[0].set_ylabel(r"$\langle \beta_1(r,t) \rangle$")
     axes[0].set_title(f"ensamble averaged tda observables, "fr"L={L}, N={N_runs}, r={r}, $\varepsilon$={epsilon}")
 
-    axes[1].plot(saved_times, p_max_mean)
-    axes[1].fill_between(saved_times, p_max_mean - p_max_sem, p_max_mean + p_max_sem, alpha=0.3)
+    axes[1].plot(sampled_times, p_max_mean)
+    axes[1].fill_between(sampled_times, p_max_mean - p_max_sem, p_max_mean + p_max_sem, alpha=0.3)
     axes[1].set_ylabel(r"$\langle P_{\max}(t) \rangle$")
 
-    axes[2].plot(saved_times, p_total_mean)
-    axes[2].fill_between(saved_times, p_total_mean - p_total_sem, p_total_mean + p_total_sem, alpha=0.3)
+    axes[2].plot(sampled_times, p_total_mean)
+    axes[2].fill_between(sampled_times, p_total_mean - p_total_sem, p_total_mean + p_total_sem, alpha=0.3)
     axes[2].set_ylabel(r"$\langle P_{\mathrm{total}}(t) \rangle$")
 
-    axes[3].plot(saved_times, n_epsilon_mean)
-    axes[3].fill_between(saved_times, n_epsilon_mean - n_epsilon_sem, n_epsilon_mean + n_epsilon_sem, alpha=0.3)
+    axes[3].plot(sampled_times, n_epsilon_mean)
+    axes[3].fill_between(sampled_times, n_epsilon_mean - n_epsilon_sem, n_epsilon_mean + n_epsilon_sem, alpha=0.3)
     axes[3].set_ylabel(r"$\langle N_\epsilon(t) \rangle$")
     axes[3].set_xlabel("monte carlo steps")
 
     plt.tight_layout()
-    plt.savefig("figures/tda_ensemble_fast_statistics.png", dpi=300)
+    plt.savefig("figures/tda_ensemble_statistics.png", dpi=300)
     plt.show()
+
+    """
+    calculation of the dynamical critical exponent from persistance data -- made by esha :)
+    """
+

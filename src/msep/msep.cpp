@@ -267,16 +267,24 @@ private:
         }
     }
 
-    void update_state(std::vector<int>& state) 
+    void update_state(std::vector<int>& state, bool same_state_swaps = false) 
     {
         std::uniform_int_distribution<int> index_dist(0, length - 1);
         std::uniform_real_distribution<double> real_dist(0.0, 1.0);
 
-        const int j = index_dist(rng);
-        const int k = (j + 1 == length) ? 0 : j + 1;
+        int j, k;
+        int alpha, beta;
 
-        const int alpha = state[j];
-        const int beta = state[k];
+        do 
+        {
+            j = index_dist(rng);
+            k = (j + 1 == length) ? 0 : j + 1;
+
+            alpha = state[j];
+            beta = state[k];
+
+        } while (!same_state_swaps && alpha == beta);
+        
         const double rate = rate_at(rates_matrix, dimension, alpha, beta);
 
         if (real_dist(rng) < rate / max_rate) 
