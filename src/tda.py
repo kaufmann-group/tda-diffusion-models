@@ -92,9 +92,9 @@ if __name__ == "__main__":
     <N_e> = the ensemble averaged number of h1 loops whose persistence is larger than epsilon
         how many loops are significant enough to survive beyond the noise threshold epsilon? 
     """
-    steps = 100000
+    steps = 35000
     L = 300
-    skip = 1000
+    skip = 100
     N_runs = 50
 
     r = 1.5
