@@ -95,52 +95,78 @@ public:
         return out;
     }
 
-    /*
-    current bug in the code where when store_history and get_projection are true that first
-    the entire chain history is stored then history is looped over to eventually just output the 
-    projected paths. rewrite the code to calculate the projected paths when we update. 
-    */
-    py::array simulate(int steps = 100000, bool store_history = false, bool get_projection = false)
+
+    py::array simulate(int steps = 100000, bool store_history = false, bool get_projection = false, int skip = 1)
     {
         const int path_dim = dimension - 1;
 
         if (store_history) 
         {
-            std::vector<int> history(static_cast<std::size_t>(steps + 1) * length);
-            std::copy(chain.begin(), chain.end(), history.begin());
+            const int n_saved = steps / skip + 1;
 
-            for (int step = 1; step <= steps; ++step) 
-            {
-                update_state(chain);
-                std::copy(chain.begin(), chain.end(), history.begin() + static_cast<std::size_t>(step) * length);
-            }
             if (get_projection) 
             {
-                py::array_t<double> out({steps + 1, length + 1, path_dim});
+                py::array_t<double> out({n_saved, length + 1, path_dim});
                 auto* path = static_cast<double*>(out.request().ptr);
-                std::fill(path, path + static_cast<std::size_t>(steps + 1) * (length + 1) * path_dim, 0.0);
 
-                for (int i = 0; i <= steps; ++i)
+                std::fill(path, path + static_cast<std::size_t>(n_saved) * (length + 1) * path_dim, 0.0);
+
+                auto write_projection = [&](int save_index)
                 {
+                    const std::size_t step_offset = static_cast<std::size_t>(save_index) * (length + 1) * path_dim;
+
                     for (int j = 0; j < length; ++j)
                     {
-                        const int species = history[static_cast<std::size_t>(i) * length + j];
+                        const int species = chain[j];
+
                         for (int k = 0; k < path_dim; ++k) 
                         {
-                            path[(static_cast<std::size_t>(i) * (length + 1) + (j + 1)) * path_dim + k] = path[(static_cast<std::size_t>(i) * (length + 1) + j) * path_dim + k] 
-                            + proj_vectors[static_cast<std::size_t>(species) * path_dim + k];
+                            path[step_offset + static_cast<std::size_t>(j + 1) * path_dim + k] = path[step_offset + static_cast<std::size_t>(j) * path_dim + k] + proj_vectors[static_cast<std::size_t>(species) * path_dim + k];
                         }
                     }
+                };
+
+                // Save projected path for initial chain at simulation step 0.
+                int save_index = 0;
+                write_projection(save_index);
+                ++save_index;
+
+                for (int step = 1; step <= steps; ++step) 
+                {
+                    update_state(chain);
+
+                    if (step % skip == 0)
+                    {
+                        write_projection(save_index);
+                        ++save_index;
+                    }
                 }
+
                 return out;
             }
             else 
             {
-                py::array_t<int> out({steps + 1, length});
-                std::copy(history.begin(), history.end(), static_cast<int*>(out.request().ptr));
+                py::array_t<int> out({n_saved, length});
+                auto* history = static_cast<int*>(out.request().ptr);
+
+                // Save initial chain.
+                std::copy(chain.begin(), chain.end(), history);
+
+                int save_index = 1;
+
+                for (int step = 1; step <= steps; ++step) 
+                {
+                    update_state(chain);
+
+                    if (step % skip == 0)
+                    {
+                        std::copy(chain.begin(), chain.end(), history + static_cast<std::size_t>(save_index) * length);
+                        ++save_index;
+                    }
+                }
                 return out;
             }
-        } 
+        }
         else 
         {
             for (int step = 0; step < steps; ++step) 
@@ -395,7 +421,8 @@ PYBIND11_MODULE(msep_cpp, m) {
         .def("simulate", &MultiSpeciesExclusionProcess::simulate,
              py::arg("steps") = 100000,
              py::arg("store_history") = false, 
-             py::arg("get_projection") = false)
+             py::arg("get_projection") = false, 
+             py::arg("skip") = 1)
         .def("get_chain", &MultiSpeciesExclusionProcess::get_chain)
         .def("get_path_projection", &MultiSpeciesExclusionProcess::get_path_projection)
         .def("get_projected_vectors", &MultiSpeciesExclusionProcess::get_projected_vectors_array)

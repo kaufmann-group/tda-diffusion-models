@@ -164,4 +164,3 @@ if __name__ == "__main__":
     """
     calculation of the dynamical critical exponent from persistance data -- made by esha :)
     """
-
