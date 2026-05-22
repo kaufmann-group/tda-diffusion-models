@@ -56,6 +56,9 @@ runs none exclusion process trajectory then compute tda observables at certain t
 def single_tda_trajectory(seed, steps, L, skip, rates_matrix, r, epsilon, max_edge_length):
     
     model = MultiSpeciesExclusionProcess(dimension=3, density=[1/3, 1/3, 1/3], rates_matrix=rates_matrix, length=L, seed=seed, shuffle=False)
+    #model = MultiSpeciesExclusionProcess(dimension=3, density=[1/3, 1/3, 1/3], rates_matrix=rates_matrix, length=L, shuffle=False)
+
+
     path_history = model.simulate(steps=steps, store_history=True, get_projection=True)
 
     saved_paths = path_history[::skip]
@@ -109,11 +112,9 @@ if __name__ == "__main__":
     beta_1_ensemble, p_max_ensemble, p_total_ensemble, n_epsilon_ensemble = [], [], [], []
 
     for run in range(N_runs):
-        seed = 2504 + run
-
         print(f"running ensemble number: {run + 1}, seed={seed}")
 
-        beta_1_values, p_max_values, p_total_values, n_epsilon_values = single_tda_trajectory(seed=seed, steps=steps, L=L, skip=skip, rates_matrix=rates_matrix, r=r, epsilon=epsilon, max_edge_length=max_edge_length)
+        beta_1_values, p_max_values, p_total_values, n_epsilon_values = single_tda_trajectory(seed=2504+run, steps=steps, L=L, skip=skip, rates_matrix=rates_matrix, r=r, epsilon=epsilon, max_edge_length=max_edge_length)
         
         beta_1_ensemble.append(beta_1_values)
         p_max_ensemble.append(p_max_values)
@@ -160,7 +161,3 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.savefig("figures/tda_ensemble_statistics.png", dpi=300)
     plt.show()
-
-    """
-    calculation of the dynamical critical exponent from persistance data -- made by esha :)
-    """

@@ -17,25 +17,20 @@
 
 namespace py = pybind11;
 
-namespace {
-
-double rate_at(const std::vector<double>& rates, int d, int alpha, int beta)
+namespace 
 {
-    return rates[static_cast<std::size_t>(alpha) * d + beta];
-}
-
-std::vector<double> flatten_rates(py::array_t<double, py::array::c_style | py::array::forcecast> rates, int d)
- {
-    py::buffer_info info = rates.request();
-    if (info.ndim != 2 || info.shape[0] != d || info.shape[1] != d)
-     {
-        throw std::invalid_argument("rates_matrix must be a 2D array with shape (dimension, dimension)");
+    double rate_at(const std::vector<double>& rates, int d, int alpha, int beta)
+    {
+        return rates[static_cast<std::size_t>(alpha) * d + beta];
     }
 
-    const auto* ptr = static_cast<const double*>(info.ptr);
-    return std::vector<double>(ptr, ptr + static_cast<std::size_t>(d) * d);
-}
+    std::vector<double> flatten_rates(py::array_t<double, py::array::c_style | py::array::forcecast> rates, int d)
+    {
+        py::buffer_info info = rates.request();
 
+        const auto* ptr = static_cast<const double*>(info.ptr);
+        return std::vector<double>(ptr, ptr + static_cast<std::size_t>(d) * d);
+    }
 }
 
 class MultiSpeciesExclusionProcess {
@@ -50,20 +45,7 @@ public:
     std::vector<int> chain;
     std::vector<double> proj_vectors; 
 
-    MultiSpeciesExclusionProcess(
-        int dim,
-        const std::vector<double>& dens,
-        py::array_t<double, py::array::c_style | py::array::forcecast> rates,
-        int len,
-        unsigned int seed,
-        bool do_shuffle = true
-    )
-        : dimension(dim),
-          density(dens),
-          rates_matrix(flatten_rates(rates, dim)),
-          length(len),
-          max_rate(1.0),
-          rng(seed) 
+    MultiSpeciesExclusionProcess(int dim, const std::vector<double>& dens, py::array_t<double, py::array::c_style | py::array::forcecast> rates, int len, unsigned int seed, bool do_shuffle = true) : dimension(dim), density(dens), rates_matrix(flatten_rates(rates, dim)), length(len), max_rate(1.0), rng(seed)
     {
         max_rate = *std::max_element(rates_matrix.begin(), rates_matrix.end());
 
@@ -74,6 +56,11 @@ public:
         {
             shuffle_chain(chain);
         }
+    }
+
+    MultiSpeciesExclusionProcess(int dim, const std::vector<double>& dens, py::array_t<double, py::array::c_style | py::array::forcecast> rates, int len, bool do_shuffle = true) : MultiSpeciesExclusionProcess(dim, dens, rates, len, std::random_device{}(), do_shuffle)
+    {
+
     }
 
     void update() 
@@ -141,7 +128,6 @@ public:
                         ++save_index;
                     }
                 }
-
                 return out;
             }
             else 
@@ -213,7 +199,6 @@ public:
                 path[static_cast<std::size_t>(i + 1) * path_dim + k] = path[static_cast<std::size_t>(i) * path_dim + k] + proj_vectors[static_cast<std::size_t>(species) * path_dim + k];
             }
         }
-
         return out;
     }
 
@@ -363,7 +348,6 @@ private:
             }
             basis.push_back(std::move(v));
         }
-
         return basis;
     }
 
@@ -394,7 +378,6 @@ private:
                 }
             }
         }
-
         return coords;
     }
 };
@@ -402,32 +385,40 @@ private:
 PYBIND11_MODULE(msep_cpp, m) {
     py::class_<MultiSpeciesExclusionProcess>(m, "MultiSpeciesExclusionProcess")
         .def(py::init<int,
-                      const std::vector<double>&,
-                      py::array_t<double, py::array::c_style | py::array::forcecast>,
-                      int,
-                      unsigned int,
-                      bool>(),
-             py::arg("dimension"),
-             py::arg("density"),
-             py::arg("rates_matrix"),
-             py::arg("length"),
-             py::arg("seed"),
-             py::arg("shuffle") = true)
+                const std::vector<double>&,
+                py::array_t<double, py::array::c_style | py::array::forcecast>,
+                int,
+                unsigned int,
+                bool>(),
+            py::arg("dimension"),
+            py::arg("density"),
+            py::arg("rates_matrix"),
+            py::arg("length"),
+            py::arg("seed"),
+            py::arg("shuffle") = true)
+        .def(py::init<int, const std::vector<double>&,
+                py::array_t<double, py::array::c_style | py::array::forcecast>,
+                int, bool>(),
+            py::arg("dimension"),
+            py::arg("density"),
+            py::arg("rates_matrix"),
+            py::arg("length"),
+            py::arg("shuffle") = true)
         .def_readonly("dimension", &MultiSpeciesExclusionProcess::dimension)
         .def_readonly("density", &MultiSpeciesExclusionProcess::density)
         .def_readonly("length", &MultiSpeciesExclusionProcess::length)
         .def_readonly("max_rate", &MultiSpeciesExclusionProcess::max_rate)
         .def("update", &MultiSpeciesExclusionProcess::update)
         .def("simulate", &MultiSpeciesExclusionProcess::simulate,
-             py::arg("steps") = 100000,
-             py::arg("store_history") = false, 
-             py::arg("get_projection") = false, 
-             py::arg("skip") = 1)
+            py::arg("steps") = 100000,
+            py::arg("store_history") = false, 
+            py::arg("get_projection") = false, 
+            py::arg("skip") = 1)
         .def("get_chain", &MultiSpeciesExclusionProcess::get_chain)
         .def("get_path_projection", &MultiSpeciesExclusionProcess::get_path_projection)
         .def("get_projected_vectors", &MultiSpeciesExclusionProcess::get_projected_vectors_array)
         .def("fourier_time_series", &MultiSpeciesExclusionProcess::fourier_time_series,
-             py::arg("n_samples") = 60000,
-             py::arg("species") = 0,
-             py::arg("sample_every") = 1);
+            py::arg("n_samples") = 60000,
+            py::arg("species") = 0,
+            py::arg("sample_every") = 1);
 }
