@@ -202,11 +202,10 @@ public:
         return out;
     }
 
-    py::array_t<std::complex<double>> fourier_time_series(int n_samples = 60000, int species = 0, int sample_every = 1) 
+    py::array_t<std::complex<double>> fourier_time_series(int species, int n_samples = 60000, int sample_every = 1, int mode = 1) 
     {
-
         std::vector<int> state = chain;
-        const double q = 2.0 * std::acos(-1.0) / static_cast<double>(length);
+        const double q = 2.0 * mode * std::acos(-1.0) / static_cast<double>(length);
 
         std::vector<double> cos_q(length);
         std::vector<double> sin_q(length);
@@ -234,6 +233,49 @@ public:
             }
 
             X[n] = std::complex<double>(re, im);
+
+            for (int s = 0; s < sample_every; ++s) 
+            {
+                for (int step = 0; step < length; ++step) 
+                {
+                    update_state(state);
+                }
+            }
+        }
+        return out;
+    }
+
+    py::array_t<std::complex<double>> fourier_time_series(int n_samples = 60000, int sample_every = 1, int mode = 1) 
+    {
+        std::vector<int> state = chain;
+        const double q = 2.0 * mode * std::acos(-1.0) / static_cast<double>(length);
+
+        std::vector<double> cos_q(length);
+        std::vector<double> sin_q(length);
+        for (int j = 0; j < length; ++j) 
+        {
+            cos_q[j] = std::cos(q * j);
+            sin_q[j] = std::sin(q * j);
+        }
+
+        py::array_t<std::complex<double>> out({n_samples, dimension});
+        auto* X = static_cast<std::complex<double>*>(out.request().ptr);
+
+        for (int n = 0; n < n_samples; ++n) 
+        {
+            std::vector<double> re(dimension, 0.0);
+            std::vector<double> im(dimension, 0.0);
+
+            for (int j = 0; j < length; ++j) 
+            {
+                re[state[j]] += cos_q[j];
+                im[state[j]] += sin_q[j];
+            }
+
+            for (int a = 0; a < dimension; ++a)
+            {
+                X[n * dimension + a] = std::complex<double>(re[a], im[a]);
+            }
 
             for (int s = 0; s < sample_every; ++s) 
             {
@@ -417,8 +459,20 @@ PYBIND11_MODULE(msep_cpp, m) {
         .def("get_chain", &MultiSpeciesExclusionProcess::get_chain)
         .def("get_path_projection", &MultiSpeciesExclusionProcess::get_path_projection)
         .def("get_projected_vectors", &MultiSpeciesExclusionProcess::get_projected_vectors_array)
-        .def("fourier_time_series", &MultiSpeciesExclusionProcess::fourier_time_series,
+        .def("fourier_time_series",
+            py::overload_cast<int, int, int, int>(
+                &MultiSpeciesExclusionProcess::fourier_time_series
+            ),
+            py::arg("species"),
             py::arg("n_samples") = 60000,
-            py::arg("species") = 0,
-            py::arg("sample_every") = 1);
+            py::arg("sample_every") = 1,
+            py::arg("mode") = 1)
+        .def("fourier_time_series",
+            py::overload_cast<int, int, int>(
+                &MultiSpeciesExclusionProcess::fourier_time_series
+            ),
+            py::kw_only(),
+            py::arg("n_samples") = 60000,
+            py::arg("sample_every") = 1,
+            py::arg("mode") = 1);
 }

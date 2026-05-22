@@ -49,7 +49,7 @@ def get_relaxation_time(C, L):
     if np.sum(mask) < 8:
         mask = ((t > 0) & (np.arange(len(t)) < end) & (envelope_smooth < 0.9) & (envelope_smooth > 0.15))
 
-    slope, intercept = np.polyfit(t[mask], np.log(envelope_smooth[mask]), 1)
+    slope, _ = np.polyfit(t[mask], np.log(envelope_smooth[mask]), 1)
     
     # this part is sketchy ... 
     if slope >= 0: 
