@@ -11,5 +11,6 @@ Currently creating Monte Carlo simulation for multi species diffusion and applyi
 - Schütz, G. M., & Wehefritz–Kaufmann, B. (2017). [Kardar-Parisi-Zhang modes in d-dimensional directed polymers.](https://www.math.purdue.edu/~ebkaufma/PhysRevE.96.032119.pdf) Physical Review E, 96(3), 032119.
 - Wehefritz-Kaufmann, B. (2010). [Dynamical critical exponent for two-species totally asymmetric diffusion on a ring.](https://sigma-journal.com/2010/039/sigma10-039.pdf) SIGMA. Symmetry, Integrability and Geometry: Methods and Applications, 6, 039.
 - Chazal, F., & Michel, B. (2021). [An introduction to topological data analysis: fundamental and practical aspects for data scientists.](https://arxiv.org/pdf/1710.04019) Frontiers in artificial intelligence, 4, 667963.
+- Krebs, K., Pfannmüller, M. P., Wehefritz, B., & Hinrichsen, H. (1995). [Finite-size scaling studies of one-dimensional reaction-diffusion systems](https://link.springer.com/content/pdf/10.1007/BF02180139.pdf). Part I. Analytical results. Journal of statistical physics, 78(5), 1429-1470.
 
 This work was created by [Esha Sury](mailto:esury@purdue.edu) and [Dhruv Upreti](mailto:dupreti@purdue.edu). Mentorship was given by [Birgit Kaufmann](mailto:ebkaufma@purdue.edu).
