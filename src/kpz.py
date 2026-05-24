@@ -9,54 +9,8 @@ import scipy as sp
 import numpy as np
 import matplotlib.pyplot as plt
 
-"""
-autocorrelation with fast fourier transform.
-"""
-def autocorrelation(x):
-    signal = np.asarray(x)
-    signal -= np.mean(signal)
-
-    n_samples = len(signal)
-
-    raw_ac = sp.signal.correlate(signal, signal, mode="full", method="fft")
-    positive_lags_ac = raw_ac[n_samples - 1 :]
-
-    # unbiased normalization
-    unbiased_ac = positive_lags_ac / np.arange(n_samples, 0, -1)
-    
-    return unbiased_ac / unbiased_ac[0]
-
-def get_relaxation_time(C, L):
-    t = np.arange(len(C))
-    envelope = np.abs(C)
-
-    # smoothing to reduce monte carlo noise
-    window = 7
-    kernel = np.ones(window) / window
-    envelope_smooth = np.convolve(envelope, kernel, mode="same")
-
-    # time where envelope has decayed significantly
-    crossings = np.where((t > 0) & (envelope_smooth < 0.2))[0]
-
-    if len(crossings) > 0:
-        end = crossings[0]
-    else:
-        end = int(min(len(t), 4 * L ** 1.5))
-
-    # fir where decay is neither too early nor too noisy
-    mask = ((t > 0) & (np.arange(len(t)) < end) & (envelope_smooth < 0.85) & (envelope_smooth > 0.25))
-
-    if np.sum(mask) < 8:
-        mask = ((t > 0) & (np.arange(len(t)) < end) & (envelope_smooth < 0.9) & (envelope_smooth > 0.15))
-
-    slope, _ = np.polyfit(t[mask], np.log(envelope_smooth[mask]), 1)
-    
-    # this part is sketchy ... 
-    if slope >= 0: 
-        return np.nan
-    else:
-        return -1.0 / slope
-
+from utils.autocorrelation import autocorrelation
+from utils.relaxation_time import get_relaxation_time
 
 def get_dynamical_critical_exponent(species_size):
     taus = []
