@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from utils.autocorrelation import autocorrelation
-from utils.relaxation_time import get_relaxation_time
+from utils.relaxation_time import relaxation_time
 from utils.msep import MultiSpeciesExclusionProcess
 
 def get_dynamical_critical_exponent(species_size):
@@ -20,13 +20,12 @@ def get_dynamical_critical_exponent(species_size):
 
         rates_matrix = np.triu(np.ones((dimension, dimension), dtype=np.float64), k=1)
 
-        #process = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix, length=L, seed=2504+L)
         process = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix, length=L)
 
-        X = process.fourier_time_series(n_samples=60000, species=0, sample_every=1)
+        X = process.fourier_time_series(n_samples=30000, species=0, sample_every=1)
         C = autocorrelation(X)
 
-        taus.append(get_relaxation_time(C, L))
+        taus.append(relaxation_time(C))
 
     taus = np.array(taus)
     valid = np.isfinite(taus) & (taus > 0)
@@ -40,28 +39,6 @@ def get_dynamical_critical_exponent(species_size):
     return logL, logtau, fit, z
 
 if __name__ == "__main__":
-    """
-    solving for the critical dynamical exponent for 3 species
-    """
-
-    logL, logtau, fit, z = get_dynamical_critical_exponent(species_size=3)
-
-    print(f"for 3 species, z = {z:.3f}")
-
-    plt.figure(figsize=(6, 4))
-    plt.plot(logL, logtau, "o", label="monte carlo data")
-    plt.plot(logL, fit, "--", label=fr"$z \approx {z:.3f}$")
-    
-    plt.xlabel(r"$\log L$")
-    plt.ylabel(r"$\log \tau(L)$")
-    plt.title(r"dynamic critical exponent monte carlo")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-
-    plt.savefig("figures/dynamical_critical_exponent_simulation.png", dpi=300)
-    plt.show()
-
     """
     solving for the critical dynamical exponent for n = 2, 3, 4, 5, 6, 7, 8, and 9 species
     """

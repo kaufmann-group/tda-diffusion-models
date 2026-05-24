@@ -145,7 +145,6 @@ if __name__ == "__main__":
     ax2.set_title("Projected Directed Polymer Path, d = 3")
 
     plt.tight_layout()
-    plt.savefig("figures/projected_directed_polymer_3d.png", dpi=300)
     plt.show()
 
     """
@@ -180,5 +179,4 @@ if __name__ == "__main__":
     ax.set_title("projected directed polymer path, d = 4")
     ax.set_box_aspect([1, 1, 1])
 
-    plt.savefig("figures/projected_directed_polymer_4d.png", dpi=300)
     plt.show()
