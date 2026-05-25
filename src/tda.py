@@ -11,16 +11,11 @@ runs none exclusion process trajectory then compute tda observables at certain t
 def single_tda_trajectory(steps, L, skip, rates_matrix, r, epsilon, max_edge_length):
     
     model = MultiSpeciesExclusionProcess(dimension=3, density=[1/3, 1/3, 1/3], rates_matrix=rates_matrix, length=L, shuffle=False)
-    #model = MultiSpeciesExclusionProcess(dimension=3, density=[1/3, 1/3, 1/3], rates_matrix=rates_matrix, length=L, shuffle=False)
 
-
-    path_history = model.simulate(steps=steps, store_history=True, get_projection=True)
-
-    saved_paths = path_history[::skip]
-
+    path_history = model.simulate(steps=steps, store_history=True, get_projection=True, skip=skip)
     beta_1_values, p_max_values, p_total_values, n_epsilon_values = [], [], [], []
 
-    for path in saved_paths:
+    for path in path_history:
         beta_1, p_max, p_total, n_epsilon = tda_observables(path, r=r, epsilon=epsilon, max_edge_length=max_edge_length)
 
         beta_1_values.append(beta_1)
