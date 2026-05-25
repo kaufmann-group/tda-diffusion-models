@@ -4,3 +4,4 @@ matplotlib
 scipy
 gudhi
 pybind11
+PyQt5
