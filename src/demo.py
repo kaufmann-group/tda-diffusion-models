@@ -4,7 +4,7 @@ from matplotlib.widgets import Slider
 
 from utils.msep import MultiSpeciesExclusionProcess
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
 
     """
     simple demonstration of three species polymer chain
@@ -16,10 +16,6 @@ if __name__ == "__main__":
     length = 30
     max_simulation_steps = 100
 
-    """
-    diagonal is zero & off diagonal entries are positive so particles move in a certain direction,
-    creating an asymmetry in the diffusion process
-    """
     rates_matrix_3d = np.array(
         [
             [0.0, 2.0, 2.0],

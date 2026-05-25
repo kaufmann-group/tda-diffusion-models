@@ -75,6 +75,24 @@ public:
         return out;
     }
 
+    void set_chain(const std::vector<int>& new_chain)
+    {
+        if (static_cast<int>(new_chain.size()) != length)
+        {
+            throw std::runtime_error("chain length must equal length");
+        }
+
+        for (int species : new_chain)
+        {
+            if (species < 0 || species >= dimension)
+            {
+                throw std::runtime_error("chain entries must be integers from 0 to dimension - 1");
+            }
+        }
+
+        chain = new_chain;
+    }
+
     py::array_t<double> get_projected_vectors_array() const 
     {
         py::array_t<double> out({dimension, dimension - 1});
@@ -457,6 +475,8 @@ PYBIND11_MODULE(msep, m) {
             py::arg("get_projection") = false, 
             py::arg("skip") = 1)
         .def("get_chain", &MultiSpeciesExclusionProcess::get_chain)
+        .def("set_chain", &MultiSpeciesExclusionProcess::set_chain,
+            py::arg("chain"))
         .def("get_path_projection", &MultiSpeciesExclusionProcess::get_path_projection)
         .def("get_projected_vectors", &MultiSpeciesExclusionProcess::get_projected_vectors_array)
         .def("fourier_time_series",

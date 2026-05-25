@@ -16,7 +16,6 @@ def relaxation_time(C):
 
     C = C / C[0]
 
-    # Define relaxation time by the 1/e decay time
     threshold = np.exp(-1)
 
     crossings = np.where((np.arange(len(C)) > 0) & (C < threshold))[0]
@@ -26,7 +25,6 @@ def relaxation_time(C):
 
     i = crossings[0]
 
-    # Linear interpolation between the point before and after crossing
     t0, t1 = i - 1, i
     C0, C1 = C[t0], C[t1]
 
