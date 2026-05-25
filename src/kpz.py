@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     fig.tight_layout() 
 
-    plt.savefig("figures/many_species_dynamical_critical_exponent_simulation.png", dpi=300)
+    plt.savefig("../figures/many_species_dynamical_critical_exponent_simulation.png", dpi=300)
     plt.show()
 
     

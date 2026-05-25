@@ -109,5 +109,5 @@ if __name__ == "__main__":
     axes[3].set_xlabel("monte carlo steps")
 
     plt.tight_layout()
-    plt.savefig("figures/tda_ensemble_statistics.png", dpi=300)
+    plt.savefig("../figures/tda_ensemble_statistics.png", dpi=300)
     plt.show()
