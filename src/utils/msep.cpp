@@ -225,60 +225,30 @@ public:
 
     py::array_t<std::complex<double>> fourier_time_series(int n_samples = 60000, int sample_every = 1, int mode = 1)
     {
-        /*
-            Returns the specified Fourier mode of the hydrodynamic normal-mode
-            density fields.
-
-            Output shape: (n_samples, dimension - 1)
-
-            Construction:
-                1. Use species 0 as the dependent species, since sum_a n_a(x,t)=1.
-                2. Build independent centered density fields
-                       u_a(x,t) = 1_{state[x] == a} - density[a],
-                   for a = 1,...,dimension-1.
-                3. Build the current Jacobian J for these independent densities:
-                       A_ab = g_ab - g_ba,
-                       j_a = rho_a [ A_a0 + sum_b (A_ab - A_a0) rho_b ],
-                       J_ab = d j_a / d rho_b.
-                4. Diagonalize J^T using Eigen. The right eigenvectors of J^T are
-                   the left eigenvectors of J. These rows form the normal-mode
-                   transformation R.
-                5. Compute phi_hat_alpha(k,t) = sum_a R_{alpha,a} u_hat_a(k,t).
-
-            The normalization of eigenvectors does not affect the relaxation exponent.
-            For asymmetric systems, these modes may carry a ballistic phase
-                exp(-i v_alpha k t),
-            so demodulate by exp(+i v_alpha k t) before fitting the decay envelope.
-        */
         const int n_modes = dimension - 1;
 
-        // Build current Jacobian J for independent species 1,...,dimension-1.
         Eigen::MatrixXd J(n_modes, n_modes);
 
         for (int a_ind = 0; a_ind < n_modes; ++a_ind)
         {
             const int a = a_ind + 1;  // physical species label
             const double rho_a = density[a];
-            const double A_a0 = rate_at(rates_matrix, dimension, a, 0)
-                              - rate_at(rates_matrix, dimension, 0, a);
+            const double A_a0 = rate_at(rates_matrix, dimension, a, 0) - rate_at(rates_matrix, dimension, 0, a);
 
             double bracket = A_a0;
             for (int c_ind = 0; c_ind < n_modes; ++c_ind)
             {
                 const int c = c_ind + 1;
-                const double A_ac = rate_at(rates_matrix, dimension, a, c)
-                                  - rate_at(rates_matrix, dimension, c, a);
+                const double A_ac = rate_at(rates_matrix, dimension, a, c) - rate_at(rates_matrix, dimension, c, a);
                 bracket += (A_ac - A_a0) * density[c];
             }
 
             for (int b_ind = 0; b_ind < n_modes; ++b_ind)
             {
                 const int b = b_ind + 1;
-                const double A_ab = rate_at(rates_matrix, dimension, a, b)
-                                  - rate_at(rates_matrix, dimension, b, a);
+                const double A_ab = rate_at(rates_matrix, dimension, a, b) - rate_at(rates_matrix, dimension, b, a);
 
-                J(a_ind, b_ind) = ((a_ind == b_ind) ? bracket : 0.0)
-                                + rho_a * (A_ab - A_a0);
+                J(a_ind, b_ind) = ((a_ind == b_ind) ? bracket : 0.0) + rho_a * (A_ab - A_a0);
             }
         }
 
