@@ -22,8 +22,8 @@ def get_dynamical_critical_exponent(species_size):
 
         process = MultiSpeciesExclusionProcess(dimension=dimension, density=density, rates_matrix=rates_matrix, length=L)
 
-        X = process.fourier_time_series(n_samples=30000, species=0, sample_every=1)
-        C = autocorrelation(X)
+        X = process.fourier_time_series(n_samples=30000, sample_every=1)
+        C = autocorrelation(X[:, 0])
 
         taus.append(relaxation_time(C))
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     for species_size, ax in zip(np.arange(2, 10, 1), axes.flatten()): 
         logL, logtau, fit, z = get_dynamical_critical_exponent(species_size=species_size) 
         
-        print(f"for {species_size} species, z = {z:.3f}")
+        print(f"for {species_size} mode, z = {z:.3f}")
         
         ax.plot(logL, logtau, "o", label="monte carlo data")
         ax.plot(logL, fit, "--", label=fr"$z \approx {z:.3f}$")

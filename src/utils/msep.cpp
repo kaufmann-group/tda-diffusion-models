@@ -3,6 +3,9 @@
 #include <pybind11/stl.h>
 #include <pybind11/complex.h>
 
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
+
 #include <algorithm>
 #include <cmath>
 #include <complex>
@@ -220,89 +223,157 @@ public:
         return out;
     }
 
-    py::array_t<std::complex<double>> fourier_time_series(int species, int n_samples = 60000, int sample_every = 1, int mode = 1) 
+    py::array_t<std::complex<double>> fourier_time_series(int n_samples = 60000, int sample_every = 1, int mode = 1)
     {
+        /*
+            Returns the specified Fourier mode of the hydrodynamic normal-mode
+            density fields.
+
+            Output shape: (n_samples, dimension - 1)
+
+            Construction:
+                1. Use species 0 as the dependent species, since sum_a n_a(x,t)=1.
+                2. Build independent centered density fields
+                       u_a(x,t) = 1_{state[x] == a} - density[a],
+                   for a = 1,...,dimension-1.
+                3. Build the current Jacobian J for these independent densities:
+                       A_ab = g_ab - g_ba,
+                       j_a = rho_a [ A_a0 + sum_b (A_ab - A_a0) rho_b ],
+                       J_ab = d j_a / d rho_b.
+                4. Diagonalize J^T using Eigen. The right eigenvectors of J^T are
+                   the left eigenvectors of J. These rows form the normal-mode
+                   transformation R.
+                5. Compute phi_hat_alpha(k,t) = sum_a R_{alpha,a} u_hat_a(k,t).
+
+            The normalization of eigenvectors does not affect the relaxation exponent.
+            For asymmetric systems, these modes may carry a ballistic phase
+                exp(-i v_alpha k t),
+            so demodulate by exp(+i v_alpha k t) before fitting the decay envelope.
+        */
+        const int n_modes = dimension - 1;
+
+        // Build current Jacobian J for independent species 1,...,dimension-1.
+        Eigen::MatrixXd J(n_modes, n_modes);
+
+        for (int a_ind = 0; a_ind < n_modes; ++a_ind)
+        {
+            const int a = a_ind + 1;  // physical species label
+            const double rho_a = density[a];
+            const double A_a0 = rate_at(rates_matrix, dimension, a, 0)
+                              - rate_at(rates_matrix, dimension, 0, a);
+
+            double bracket = A_a0;
+            for (int c_ind = 0; c_ind < n_modes; ++c_ind)
+            {
+                const int c = c_ind + 1;
+                const double A_ac = rate_at(rates_matrix, dimension, a, c)
+                                  - rate_at(rates_matrix, dimension, c, a);
+                bracket += (A_ac - A_a0) * density[c];
+            }
+
+            for (int b_ind = 0; b_ind < n_modes; ++b_ind)
+            {
+                const int b = b_ind + 1;
+                const double A_ab = rate_at(rates_matrix, dimension, a, b)
+                                  - rate_at(rates_matrix, dimension, b, a);
+
+                J(a_ind, b_ind) = ((a_ind == b_ind) ? bracket : 0.0)
+                                + rho_a * (A_ab - A_a0);
+            }
+        }
+
+        // Diagonalize J^T. If v_alpha is a right eigenvector of J^T,
+        // then v_alpha^T is a left eigenvector of J.
+        Eigen::ComplexEigenSolver<Eigen::MatrixXd> solver(J.transpose());
+        const Eigen::VectorXcd eigenvalues = solver.eigenvalues();
+        const Eigen::MatrixXcd eigenvectors = solver.eigenvectors();
+
+        // Sort modes by velocity Re(eigenvalue), so columns are reproducible.
+        std::vector<int> order(n_modes);
+        std::iota(order.begin(), order.end(), 0);
+        std::sort(order.begin(), order.end(), [&](int i, int j)
+        {
+            const double vi = eigenvalues[i].real();
+            const double vj = eigenvalues[j].real();
+            if (std::abs(vi - vj) > 1e-12)
+            {
+                return vi < vj;
+            }
+            return eigenvalues[i].imag() < eigenvalues[j].imag();
+        });
+
+        // R[alpha, a_ind] is the left eigenvector component for mode alpha.
+        std::vector<std::complex<double>> R(static_cast<std::size_t>(n_modes) * n_modes);
+        for (int alpha = 0; alpha < n_modes; ++alpha)
+        {
+            const int col = order[alpha];
+            Eigen::VectorXcd left_vec = eigenvectors.col(col);
+
+            const double vec_norm = left_vec.norm();
+            if (vec_norm < 1e-14)
+            {
+                throw std::runtime_error("Eigen returned a near-zero eigenvector");
+            }
+            left_vec /= vec_norm;
+
+            for (int a_ind = 0; a_ind < n_modes; ++a_ind)
+            {
+                R[static_cast<std::size_t>(alpha) * n_modes + a_ind] =
+                    std::complex<double>(left_vec[a_ind].real(), left_vec[a_ind].imag());
+            }
+        }
+
         std::vector<int> state = chain;
         const double q = 2.0 * mode * std::acos(-1.0) / static_cast<double>(length);
 
         std::vector<double> cos_q(length);
         std::vector<double> sin_q(length);
-        for (int j = 0; j < length; ++j) 
+        for (int j = 0; j < length; ++j)
         {
             cos_q[j] = std::cos(q * j);
             sin_q[j] = std::sin(q * j);
         }
 
-        py::array_t<std::complex<double>> out(n_samples);
+        py::array_t<std::complex<double>> out({n_samples, n_modes});
         auto* X = static_cast<std::complex<double>*>(out.request().ptr);
 
-        for (int n = 0; n < n_samples; ++n) 
+        for (int n = 0; n < n_samples; ++n)
         {
-            double re = 0.0;
-            double im = 0.0;
+            std::vector<std::complex<double>> u_hat(n_modes, std::complex<double>(0.0, 0.0));
 
-            for (int j = 0; j < length; ++j) 
+            for (int j = 0; j < length; ++j)
             {
-                if (state[j] == species) 
+                const std::complex<double> phase(cos_q[j], sin_q[j]);
+
+                for (int a_ind = 0; a_ind < n_modes; ++a_ind)
                 {
-                    re += cos_q[j];
-                    im += sin_q[j];
+                    const int a = a_ind + 1;
+                    const double centered_occ = ((state[j] == a) ? 1.0 : 0.0) - density[a];
+                    u_hat[a_ind] += centered_occ * phase;
                 }
             }
 
-            X[n] = std::complex<double>(re, im);
-
-            for (int s = 0; s < sample_every; ++s) 
+            for (int alpha = 0; alpha < n_modes; ++alpha)
             {
-                for (int step = 0; step < length; ++step) 
+                std::complex<double> phi_hat(0.0, 0.0);
+
+                for (int a_ind = 0; a_ind < n_modes; ++a_ind)
+                {
+                    phi_hat += R[static_cast<std::size_t>(alpha) * n_modes + a_ind] * u_hat[a_ind];
+                }
+
+                X[static_cast<std::size_t>(n) * n_modes + alpha] = phi_hat;
+            }
+
+            for (int s = 0; s < sample_every; ++s)
+            {
+                for (int step = 0; step < length; ++step)
                 {
                     update_state(state);
                 }
             }
         }
-        return out;
-    }
 
-    py::array_t<std::complex<double>> fourier_time_series(int n_samples = 60000, int sample_every = 1, int mode = 1) 
-    {
-        std::vector<int> state = chain;
-        const double q = 2.0 * mode * std::acos(-1.0) / static_cast<double>(length);
-
-        std::vector<double> cos_q(length);
-        std::vector<double> sin_q(length);
-        for (int j = 0; j < length; ++j) 
-        {
-            cos_q[j] = std::cos(q * j);
-            sin_q[j] = std::sin(q * j);
-        }
-
-        py::array_t<std::complex<double>> out({n_samples, dimension});
-        auto* X = static_cast<std::complex<double>*>(out.request().ptr);
-
-        for (int n = 0; n < n_samples; ++n) 
-        {
-            std::vector<double> re(dimension, 0.0);
-            std::vector<double> im(dimension, 0.0);
-
-            for (int j = 0; j < length; ++j) 
-            {
-                re[state[j]] += cos_q[j];
-                im[state[j]] += sin_q[j];
-            }
-
-            for (int a = 0; a < dimension; ++a)
-            {
-                X[n * dimension + a] = std::complex<double>(re[a], im[a]);
-            }
-
-            for (int s = 0; s < sample_every; ++s) 
-            {
-                for (int step = 0; step < length; ++step) 
-                {
-                    update_state(state);
-                }
-            }
-        }
         return out;
     }
 
@@ -479,18 +550,7 @@ PYBIND11_MODULE(msep, m) {
             py::arg("chain"))
         .def("get_path_projection", &MultiSpeciesExclusionProcess::get_path_projection)
         .def("get_projected_vectors", &MultiSpeciesExclusionProcess::get_projected_vectors_array)
-        .def("fourier_time_series",
-            py::overload_cast<int, int, int, int>(
-                &MultiSpeciesExclusionProcess::fourier_time_series
-            ),
-            py::arg("species"),
-            py::arg("n_samples") = 60000,
-            py::arg("sample_every") = 1,
-            py::arg("mode") = 1)
-        .def("fourier_time_series",
-            py::overload_cast<int, int, int>(
-                &MultiSpeciesExclusionProcess::fourier_time_series
-            ),
+        .def("fourier_time_series", &MultiSpeciesExclusionProcess::fourier_time_series,
             py::kw_only(),
             py::arg("n_samples") = 60000,
             py::arg("sample_every") = 1,

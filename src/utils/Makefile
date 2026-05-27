@@ -8,7 +8,7 @@ SRC := msep.cpp
 EXT_SUFFIX := $(shell $(PYTHON) -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))")
 PYBIND11_INCLUDES := $(shell $(PYTHON) -m pybind11 --includes)
 
-CXXFLAGS := -O3 -Wall -shared -std=c++17 -fPIC
+CXXFLAGS = -O3 -Wall -shared -std=c++17 -fPIC -I/opt/homebrew/include/eigen3
 LDFLAGS := -undefined dynamic_lookup
 
 TARGET := $(MODULE_NAME)$(EXT_SUFFIX)
