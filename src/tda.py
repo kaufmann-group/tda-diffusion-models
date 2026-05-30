@@ -40,7 +40,7 @@ if __name__ == "__main__":
         how many loops are significant enough to survive beyond the noise threshold epsilon? 
     """
 
-    steps = 35000
+    steps = 100000
     L = 300
     skip = 10
     N_runs = 50
