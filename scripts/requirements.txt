@@ -5,3 +5,5 @@ scipy
 gudhi
 pybind11
 PyQt6
+ipykernel
+notebook
