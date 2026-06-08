@@ -2,9 +2,14 @@
 
 This project relates to applying methods in Topological Data Analysis (TDA) to the Kardar–Parisi–Zhang (KPZ) equation while modeling two species growth models. 
 
+## Accomplishments
+
+- Simulate multi-species diffusion process given the swapping rates, length, number of species (dimension) and density of species.
+- Successfully extracted roughness exponent ($\alpha$), growth exponent ($\beta$) and the dynamical critical exponent ($z$) critical exponents from multi-species diffusion processes'.
+
 ## Current Goals
 
-Currently creating Monte Carlo simulation for multi species diffusion and applying different TDA libraries to solve for parameters like the Betti number of the graph.
+- Extract dynamical critical exponent via topological data of multi-species diffusion processes'.
 
 ## References
 
