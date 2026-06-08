@@ -6,9 +6,7 @@ exclusion process falls within the the KPZ universality class.
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utils.autocorrelation import autocorrelation
-from utils.relaxation_time import relaxation_time
-from utils.msep import MultiSpeciesExclusionProcess
+from utils import *
 
 def get_dynamical_critical_exponent(species_size):
     taus = [[] for _ in range(species_size-1)]

@@ -2,8 +2,7 @@ import numpy as np
 import gudhi as gd
 import matplotlib.pyplot as plt
 
-from utils.tda import tda_observables
-from utils.msep import MultiSpeciesExclusionProcess
+from utils import *
 
 """
 runs none exclusion process trajectory then compute tda observables at certain times

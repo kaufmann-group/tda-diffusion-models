@@ -1,10 +1,11 @@
+"""
+plots the 
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utils.autocorrelation import autocorrelation
-from utils.msep import MultiSpeciesExclusionProcess
-from utils.relaxation_time import relaxation_time
-
+from utils import *
 
 def getzs(rates_matrix):
     tau1s = []
@@ -34,11 +35,11 @@ def getzs(rates_matrix):
     fit1 = z1*log_L + intercept1
     fit2 = z2*log_L + intercept2
 
-    return log_L, log_t1, log_t2, z1, z2, intercept1, intercept2, fit1, fit2
+    return log_L, log_t1, log_t2, z1, z2, fit1, fit2
 
 def plot(ax, rates_matrix):
     
-    log_L, log_t1, log_t2, z1, z2, intercept1, intercept2, fit1, fit2 = getzs(rates_matrix)
+    log_L, log_t1, log_t2, z1, z2, fit1, fit2 = getzs(rates_matrix)
 
     ax.plot(log_L, log_t1, "go", alpha = 0.5, ms = 4, label = f"z1 = {z1:.2f}")
     ax.plot(log_L, log_t2, "go", alpha = 0.5, ms = 4, label = f"z2 = {z2:.2f}")
