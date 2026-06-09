@@ -10,6 +10,7 @@ runs none exclusion process trajectory then compute tda observables at certain t
 def single_tda_trajectory(steps, L, skip, rates_matrix, r, epsilon, max_edge_length):
     
     model = MultiSpeciesExclusionProcess(dimension=3, density=[1/3, 1/3, 1/3], rates_matrix=rates_matrix, length=L, shuffle=False)
+    #model.set_chain(equal_spread_chain(L).tolist())
 
     path_history = model.simulate(steps=steps, store_history=True, get_projection=True, skip=skip)
     beta_1_values, p_max_values, p_total_values, n_epsilon_values = [], [], [], []
@@ -39,9 +40,9 @@ if __name__ == "__main__":
         how many loops are significant enough to survive beyond the noise threshold epsilon? 
     """
 
-    steps = 100000
+    steps = 500000
     L = 300
-    skip = 10
+    skip = 100
     N_runs = 50
 
     r = 1.5
@@ -108,5 +109,5 @@ if __name__ == "__main__":
     axes[3].set_xlabel("monte carlo steps")
 
     plt.tight_layout()
-    plt.savefig("../figures/tda_ensemble_statistics.png", dpi=300)
+    plt.savefig("../figures/tda_ensemble_fast_statistics.png", dpi=300)
     plt.show()

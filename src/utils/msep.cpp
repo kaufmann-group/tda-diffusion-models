@@ -55,20 +55,7 @@ public:
     std::vector<int> chain;
     std::vector<double> proj_vectors;
 
-    MultiSpeciesExclusionProcess(
-        int dim,
-        const std::vector<double>& dens,
-        py::array_t<double, py::array::c_style | py::array::forcecast> rates,
-        int len,
-        unsigned int seed,
-        bool do_shuffle = true
-    )
-        : dimension(dim),
-          density(dens),
-          rates_matrix(flatten_rates(rates, dim)),
-          length(len),
-          max_rate(1.0),
-          rng(seed)
+    MultiSpeciesExclusionProcess(int dim, const std::vector<double>& dens, py::array_t<double, py::array::c_style | py::array::forcecast> rates, int len, unsigned int seed, bool do_shuffle = true) : dimension(dim), density(dens), rates_matrix(flatten_rates(rates, dim)), length(len), max_rate(1.0), rng(seed)
     {
         validate_parameters();
 
@@ -87,14 +74,7 @@ public:
         }
     }
 
-    MultiSpeciesExclusionProcess(
-        int dim,
-        const std::vector<double>& dens,
-        py::array_t<double, py::array::c_style | py::array::forcecast> rates,
-        int len,
-        bool do_shuffle = true
-    )
-        : MultiSpeciesExclusionProcess(dim, dens, rates, len, std::random_device{}(), do_shuffle)
+    MultiSpeciesExclusionProcess( int dim, const std::vector<double>& dens, py::array_t<double, py::array::c_style | py::array::forcecast> rates, int len, bool do_shuffle = true ) : MultiSpeciesExclusionProcess(dim, dens, rates, len, std::random_device{}(), do_shuffle)
     {
     }
 
@@ -408,11 +388,7 @@ public:
         return out;
     }
 
-    std::variant<py::array_t<std::complex<double>>, std::pair<py::array_t<std::complex<double>>, py::array>> fourier_time_series(int n_samples = 60000,
-                        bool store_history = false,
-                        bool get_projection = false,
-                        int sample_every = 1,
-                        int mode = 1)
+    std::variant<py::array_t<std::complex<double>>, std::pair<py::array_t<std::complex<double>>, py::array>> fourier_time_series(int n_samples = 60000, bool store_history = false, bool get_projection = false, int sample_every = 1, int mode = 1)
     {
         if (n_samples <= 0)
         {
@@ -432,8 +408,7 @@ public:
 
         Eigen::MatrixXcd R_matrix = build_left_eigenvector_matrix_complex();
 
-        const double q = 2.0 * static_cast<double>(mode) * std::acos(-1.0)
-                       / static_cast<double>(length);
+        const double q = 2.0 * static_cast<double>(mode) * std::acos(-1.0) / static_cast<double>(length);
 
         std::vector<double> cos_q(length);
         std::vector<double> sin_q(length);
@@ -900,7 +875,7 @@ PYBIND11_MODULE(msep, m)
                 int,
                 unsigned int,
                 bool>(),
-            py::arg("dimension"),
+            py::arg("s"),
             py::arg("density"),
             py::arg("rates_matrix"),
             py::arg("length"),
