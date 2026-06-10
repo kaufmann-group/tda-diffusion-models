@@ -20,6 +20,12 @@ fi
 
 python3 -m venv .venv
 source $REPO/.venv/bin/activate
+
+case ":$PATH:" in
+    *":$REPO/.venv/bin:"*) ;;
+    *) export PATH="$REPO/.venv/bin:$PATH" ;;
+esac
+
 pip install --upgrade pip
 pip install -r ./scripts/requirements.txt
 python -m ipykernel install --user --name=repo-env --display-name "Repository Environment"
