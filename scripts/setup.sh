@@ -19,10 +19,17 @@ else
 fi
 
 python3 -m venv .venv
-source .venv/bin/activate
+source $REPO/.venv/bin/activate
 pip install --upgrade pip
 pip install -r ./scripts/requirements.txt
 python -m ipykernel install --user --name=repo-env --display-name "Repository Environment"
+
+rm -rf "$REPO/.eigen"
+mkdir -p "$REPO/.eigen"
+git clone --depth 1 https://gitlab.com/libeigen/eigen.git "$REPO/eigen"
+cp -a "$REPO/eigen/Eigen" "$REPO/.eigen/"
+rm -rf "$REPO/eigen"
+
 make -C src/utils
 
 echo ""

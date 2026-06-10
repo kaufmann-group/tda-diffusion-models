@@ -1,6 +1,7 @@
-PYTHON := ../../.venv/bin/python3
+REPO_PATH := $(shell git rev-parse --show-toplevel)
+
+PYTHON := $(REPO_PATH)/.venv/bin/python3
 CXX := c++
-CXXFLAGS := -O3 -Wall -shared -std=c++17 -fPIC
 
 MODULE_NAME := msep
 SRC := msep.cpp
@@ -8,8 +9,17 @@ SRC := msep.cpp
 EXT_SUFFIX := $(shell $(PYTHON) -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))")
 PYBIND11_INCLUDES := $(shell $(PYTHON) -m pybind11 --includes)
 
-CXXFLAGS = -O3 -Wall -shared -std=c++17 -fPIC -I/opt/homebrew/include/eigen3
-LDFLAGS := -undefined dynamic_lookup
+EIGEN_INCLUDE := $(REPO_PATH)/.eigen
+
+CXXFLAGS := -O3 -Wall -shared -std=c++17 -fPIC
+CXXFLAGS += -I$(EIGEN_INCLUDE)
+
+UNAME_S := $(shell uname -s)
+LDFLAGS :=
+
+ifeq ($(UNAME_S),Darwin)
+	LDFLAGS += -undefined dynamic_lookup
+endif
 
 TARGET := $(MODULE_NAME)$(EXT_SUFFIX)
 
