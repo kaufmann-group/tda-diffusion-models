@@ -9,7 +9,7 @@ This project relates to applying methods in Topological Data Analysis (TDA) to t
 
 ## Current Goals
 
-- Extract dynamical critical exponent via topological data of multi-species diffusion processes' using TDA.
+- To extract dynamical critical exponent via topological data of multi-species diffusion processes' using TDA.
 
 ## References
 
