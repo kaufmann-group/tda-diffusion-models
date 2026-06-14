@@ -2,6 +2,7 @@
 plots the 
 """
 
+import git_root
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -76,6 +77,10 @@ if __name__ == "__main__":
         [1.0, 1.0, 0.0]
     ])
 
+    """
+    plotting
+    """
+
     plot(ax = axis[0,0], rates_matrix = rates_matrix_1)
     plot(ax = axis[0,1], rates_matrix = rates_matrix_2)
     plot(ax = axis[1,0], rates_matrix = rates_matrix_3)
@@ -85,6 +90,6 @@ if __name__ == "__main__":
     plt.tight_layout() 
     
 
-    plt.savefig("../figures/timescaling.png", dpi=300)
+    #plt.savefig(f"{git_root.git_root()}/figures/timescaling.png", dpi=300)
     plt.show()
 

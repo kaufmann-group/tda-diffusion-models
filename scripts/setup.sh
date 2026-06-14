@@ -30,13 +30,14 @@ pip install --upgrade pip
 pip install -r ./scripts/requirements.txt
 python -m ipykernel install --user --name=repo-env --display-name "Repository Environment"
 
+# the only thing that works on the rcac server instead you could just brew install eigen and manually change the path in the make file
 rm -rf "$REPO/.eigen"
 mkdir -p "$REPO/.eigen"
 git clone --depth 1 https://gitlab.com/libeigen/eigen.git "$REPO/eigen"
 cp -a "$REPO/eigen/Eigen" "$REPO/.eigen/"
 rm -rf "$REPO/eigen"
 
-make -C src/utils
+make -C src/utils/msep
 
 echo ""
 echo "Setup complete."

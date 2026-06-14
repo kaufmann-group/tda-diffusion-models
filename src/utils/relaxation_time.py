@@ -1,7 +1,7 @@
 import numpy as np
 
 """
-
+gets the relaxation time.
 """
 
 def relaxation_time(C):

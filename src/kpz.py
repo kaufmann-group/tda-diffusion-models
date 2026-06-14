@@ -3,6 +3,7 @@ the goal of this program is to demonstrate the multi species
 exclusion process falls within the the KPZ universality class.
 """
 
+import git_root
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -66,7 +67,7 @@ if __name__ == "__main__":
 
     fig.tight_layout() 
 
-    plt.savefig("../figures/many_species_dynamical_critical_exponent_simulation.png", dpi=300)
+    plt.savefig(f"{git_root.git_root()}/figures/many_species_dynamical_critical_exponent_simulation.png", dpi=300)
     plt.show()
 
     
