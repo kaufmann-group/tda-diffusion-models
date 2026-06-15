@@ -2,8 +2,6 @@
 
 *__pycache__
 
-data/
-
 *.aux
 *.log
 *.out
