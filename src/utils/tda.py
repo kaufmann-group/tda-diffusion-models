@@ -8,7 +8,7 @@ from matplotlib.patches import Polygon
 computes tda observables from one 2d projected path snapshot ... 
 """
 
-def tda_observables(point_cloud, r=1.5, epsilon=0.2, max_edge_length=5.0):
+def beta_1(point_cloud, r=1.5, max_edge_length=5.0):
     # removes duplicate points ... 
     point_cloud = np.unique(point_cloud, axis=0)
 
@@ -36,19 +36,12 @@ def tda_observables(point_cloud, r=1.5, epsilon=0.2, max_edge_length=5.0):
     # beta_1(r,t): number of h1 bars alive at filtration scale r ... also don't know what this means
     beta_1 = np.sum((births <= r) & (r < deaths))
 
-    # return int(beta_1) # just return beta_1
+    return int(beta_1)
 
-    # total h1 persistence
-    p_total = np.sum(persistences)
 
-    # max h1 persistence
-    p_max = np.max(persistences)
-
-    # number of loops with persistence above threshold epsilon ... why is this important
-    n_epsilon = np.sum(persistences > epsilon)
-
-    return int(beta_1), float(p_max), float(p_total), int(n_epsilon)
-
+"""
+draw the rips simplices
+"""
 def draw_rips_simplices(points, axes, d, max_dimension=2, show_labels=False):
     rips = gd.RipsComplex(points=points, max_edge_length=d)
     st = rips.create_simplex_tree(max_dimension=max_dimension)
