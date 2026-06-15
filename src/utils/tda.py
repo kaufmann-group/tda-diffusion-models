@@ -5,7 +5,7 @@ from matplotlib.patches import Polygon
 
 
 """
-computes tda observables from one 2d projected path snapshot ... 
+computes beta_1 from one 2d projected path snapshot ... 
 """
 
 def beta_1(point_cloud, r=1.5, max_edge_length=5.0):
@@ -32,6 +32,38 @@ def beta_1(point_cloud, r=1.5, max_edge_length=5.0):
     beta_1_value = np.sum((births <= r) & (r < deaths))
 
     return int(beta_1_value)
+
+"""
+computes p_max from one 2d projected path snapshot
+
+p_max is the largest H1 persistence value in the persistence diagram; for each H1 loop persistence = death - birth.
+"""
+
+def p_max(point_cloud, max_edge_length=5.0):
+    point_cloud = np.unique(point_cloud, axis=0)
+
+    if point_cloud.shape[0] < 3:
+        return 0.0
+
+    rips = gd.RipsComplex(points=point_cloud, max_edge_length=max_edge_length)
+    simplex_tree = rips.create_simplex_tree(max_dimension=2)
+    simplex_tree.persistence()
+
+    h1 = simplex_tree.persistence_intervals_in_dimension(1)
+
+    if h1.shape[0] > 0:
+        h1 = h1[np.isfinite(h1[:, 1])]
+
+    if h1.shape[0] == 0:
+        return 0.0
+
+    births = h1[:, 0]
+    deaths = h1[:, 1]
+
+    persistences = deaths - births
+    p_max_value = np.max(persistences)
+
+    return float(p_max_value)
 
 
 """

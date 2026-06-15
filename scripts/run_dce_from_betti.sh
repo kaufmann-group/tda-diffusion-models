@@ -16,4 +16,4 @@ export VECLIB_MAXIMUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
 REPO=$(git rev-parse --show-toplevel)
-python "$REPO/src/tda.py"
+python "$REPO/src/dce_from_betti.py"

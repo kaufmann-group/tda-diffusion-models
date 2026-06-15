@@ -36,28 +36,40 @@ def relaxation_time(C):
     return float(tau)
 
 """
-get the saturation time
+get the saturation time for noisy data
+
+Saturation value is estimated from the final part of the curve.
+Saturation time is the first time where the curve stays close to that value
+for a full window.
 """
-def saturation_time(x, y):
-    dy = np.gradient(y, x)
+def saturation_time(x, y, steady_fraction=0.2, tolerance_fraction=0.10, window_fraction=0.05):
+    x = np.asarray(x)
+    y = np.asarray(y)
 
-    window_len = 50
-    dy_smooth = np.convolve(dy, np.ones(window_len)/window_len, mode='same')
+    n = len(y)
 
-    threshold = 0.10 * dy_smooth[0]
-    saturation_idx = np.where(dy_smooth < threshold)[0][0]
+    steady_start = int((1.0 - steady_fraction) * n)
+    steady_region = y[steady_start:]
+    saturation_value = np.mean(steady_region)
 
-    saturation_time = x[saturation_idx]
-    saturation_value = y[saturation_idx]
+    tolerance = tolerance_fraction * abs(saturation_value)
+    if tolerance == 0:
+        tolerance = tolerance_fraction
 
-    return x[saturation_idx], y[saturation_idx]
+    window_len = max(1, int(window_fraction * n))
+
+    for i in range(0, n - window_len):
+        window = y[i:i + window_len]
+
+        if np.all(np.abs(window - saturation_value) <= tolerance):
+            return x[i], saturation_value
+
+    return np.nan, saturation_value
 
 """
 smoothen with Savgol filter
 """
-def smooth(y):
-    window_length = 1001
-    polyorder = 3
+def smooth(y, polyorder = 3, window_length = 1001):
 
     return savgol_filter(y, window_length=window_length, polyorder=polyorder)
 

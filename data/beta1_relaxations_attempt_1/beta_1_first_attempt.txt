@@ -1,9 +1,0 @@
-L = 30, saturation time = 44000, saturation value = 0.16395902955886005
-L = 60, saturation time = 35100, saturation value = 0.45950054289085823
-L = 90, saturation time = 41100, saturation value = 0.7688025207470924
-L = 120, saturation time = 43300, saturation value = 1.0785650844930172
-L = 150, saturation time = 54700, saturation value = 1.158379227905487
-L = 180, saturation time = 88200, saturation value = 1.4927361929546559
-L = 210, saturation time = 63000, saturation value = 1.3881191316862103
-L = 240, saturation time = 91700, saturation value = 1.584012362736479
-L = 270, saturation time = 166800, saturation value = 2.00255099990459
