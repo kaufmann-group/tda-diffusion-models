@@ -9,15 +9,12 @@ computes tda observables from one 2d projected path snapshot ...
 """
 
 def beta_1(point_cloud, r=1.5, max_edge_length=5.0):
-    # removes duplicate points ... 
     point_cloud = np.unique(point_cloud, axis=0)
 
     if point_cloud.shape[0] < 3:
-        return 0, 0.0, 0.0, 0
+        return 0
 
     rips = gd.RipsComplex(points=point_cloud, max_edge_length=max_edge_length)
-
-    # max_dimension=2 so h1 loops can die by being filled in according to ai ... idk what this means 
     simplex_tree = rips.create_simplex_tree(max_dimension=2)
     simplex_tree.persistence()
 
@@ -27,16 +24,14 @@ def beta_1(point_cloud, r=1.5, max_edge_length=5.0):
         h1 = h1[np.isfinite(h1[:, 1])]
 
     if h1.shape[0] == 0:
-        return 0, 0.0, 0.0, 0
+        return 0
 
     births = h1[:, 0]
     deaths = h1[:, 1]
-    persistences = deaths - births
 
-    # beta_1(r,t): number of h1 bars alive at filtration scale r ... also don't know what this means
-    beta_1 = np.sum((births <= r) & (r < deaths))
+    beta_1_value = np.sum((births <= r) & (r < deaths))
 
-    return int(beta_1)
+    return int(beta_1_value)
 
 
 """
