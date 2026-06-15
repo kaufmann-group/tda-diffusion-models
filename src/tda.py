@@ -56,7 +56,7 @@ if __name__ == "__main__":
         plt.title(f"beta 1 relaxation, L={L}")
         plt.legend()
         plt.tight_layout()
-        plt.savefig(f"{git_root.git_root()}/figures/beta1_relaxations/beta1_relaxation_L_{L}.png", dpi=300)
+        plt.savefig(f"{git_root.git_root()}/figures/beta1_relaxations_attempt_2/beta1_relaxation_L_{L}.png", dpi=300)
         plt.close()
 
     saturation_times = np.array(saturation_times)
@@ -76,4 +76,4 @@ if __name__ == "__main__":
     plt.legend(fontsize=13)
 
     plt.tight_layout()
-    plt.savefig(f"{git_root.git_root()}/figures/dynamic_exponent_beta1_log_fit.png", dpi=300)
+    plt.savefig(f"{git_root.git_root()}/figures/beta1_relaxations_attempt_2/dynamic_exponent_beta1_log_fit.png", dpi=300)
