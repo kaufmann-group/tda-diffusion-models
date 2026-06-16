@@ -9,3 +9,4 @@ jupyter
 notebook
 git_root
 tqdm
+ipyparallel
