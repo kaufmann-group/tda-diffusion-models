@@ -26,10 +26,11 @@ if __name__ == "__main__":
 
     max_edge_length = 3.0
 
-    rates_matrix = np.array([[0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [0.0, 0.0, 0.0]], dtype=np.float64)
+    rates_matrix = np.array([[0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [0.0, 0.0, 0.0]], dtype=np.float64) # totally asymmetric 
+    # rates_matrix = np.array([[0.0, 1.0, 1.0], [1.0, 0.0, 1.0], [1.0, 1.0, 0.0]], dtype=np.float64) # symmetric
 
     sampled_times = np.arange(0, steps + 1, skip)
-    L_values = np.arange(60, 600, 60)
+    L_values = np.arange(120, 600, 15)
     saturation_times = []
 
     for L in L_values:
