@@ -67,7 +67,5 @@ if __name__ == "__main__":
 
     fig.tight_layout() 
 
-    plt.savefig(f"{git_root.git_root()}/figures/many_species_dynamical_critical_exponent_simulation.png", dpi=300)
-    plt.show()
-
+    plt.savefig(f"{git_root.git_root()}/data/many_species_dynamical_critical_exponent_simulation.png", dpi=300)
     

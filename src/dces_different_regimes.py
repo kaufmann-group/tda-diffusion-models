@@ -1,5 +1,7 @@
 """
-plots the 
+plots the dynamical critical exponent for different rates matrices
+representing different combinations of the kpz and diffusive universality 
+classes.   
 """
 
 import git_root
@@ -47,7 +49,7 @@ def plot(ax, rates_matrix):
     ax.plot(log_L, fit1, "b--", label = "Fit 1")
     ax.plot(log_L, fit2, "b--", label = "Fit 2")
     ax.set_xlabel("log(L)")
-    ax.set_ylabel("log(τ)")
+    ax.set_ylabel(r"log($\tau$)")
     ax.legend(fontsize=8)
     
 if __name__ == "__main__":
@@ -90,6 +92,4 @@ if __name__ == "__main__":
     plt.tight_layout() 
     
 
-    #plt.savefig(f"{git_root.git_root()}/figures/timescaling.png", dpi=300)
-    plt.show()
-
+    plt.savefig(f"{git_root.git_root()}/data/timescaling.png", dpi=300)

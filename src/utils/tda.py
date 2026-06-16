@@ -107,3 +107,41 @@ def draw_rips_simplices(points, axes, d, max_dimension=2, show_labels=False):
 
     axes.set_title(f"rips complex simplices for d = {d}")
     axes.set_aspect('equal')
+
+"""
+computes H0 persistence from one normal-mode height function
+
+Input can be either:
+    heights: shape (L + 1,)
+or:
+    point_cloud: shape (L + 1, 2), where column 0 is x and column 1 is h_gamma(x)
+
+Returns the finite H0 persistences death - birth.
+"""
+def h0_persistence_normal_mode_height(normal_mode_height):
+    normal_mode_height = np.asarray(normal_mode_height, dtype=float)
+
+    if normal_mode_height.ndim == 2:
+        heights = normal_mode_height[:, 1]
+    else:
+        heights = normal_mode_height
+
+    if heights.shape[0] < 2:
+        return np.array([])
+
+    cubical_complex = gd.CubicalComplex(top_dimensional_cells=heights)
+    cubical_complex.persistence()
+
+    h0 = cubical_complex.persistence_intervals_in_dimension(0)
+
+    if h0.shape[0] > 0:
+        h0 = h0[np.isfinite(h0[:, 1])]
+
+    if h0.shape[0] == 0:
+        return np.array([])
+
+    births = h0[:, 0]
+    deaths = h0[:, 1]
+    persistences = deaths - births
+
+    return persistences

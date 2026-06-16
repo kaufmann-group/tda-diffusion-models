@@ -30,7 +30,7 @@ if __name__ == "__main__":
     rates_matrix = np.array([[0.0, 2.0, 2.0], [1.0, 0.0, 1.5], [1.0, 1.5, 0.0]], dtype=np.float64)
 
     sampled_times = np.arange(0, steps + 1, skip)
-    L_values = np.arange(120, 600, 15)
+    L_values = np.arange(120, 600, 9)
     saturation_times = []
 
     for L in L_values: 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         plt.title(f"beta 1 relaxation, L={L}")
         plt.legend()
         plt.tight_layout()
-        plt.savefig(f"{git_root.git_root()}/data/beta1_relaxations/beta1_relaxation_L_{L}.png", dpi=300)
+        plt.savefig(f"{git_root.git_root()}/data/path_projections_beta1_relaxations_v2/beta1_relaxation_L_{L}.png", dpi=300)
         plt.close()
 
     saturation_times = np.array(saturation_times)
@@ -76,4 +76,4 @@ if __name__ == "__main__":
     plt.legend(fontsize=13)
 
     plt.tight_layout()
-    plt.savefig(f"{git_root.git_root()}/data/beta1_relaxations/dynamic_exponent_beta1_log_fit.png", dpi=300)
+    plt.savefig(f"{git_root.git_root()}/data/path_projections_beta1_relaxations/dynamic_exponent_beta1_log_fit.png", dpi=300)
