@@ -69,7 +69,7 @@ def saturation_time(x, y, steady_fraction=0.2, tolerance_fraction=0.10, window_f
 """
 smoothen with Savgol filter
 """
-def smooth(y, polyorder = 3, window_length = 1001):
+def smooth(y, polyorder = 3, window_length = 101):
 
     return savgol_filter(y, window_length=window_length, polyorder=polyorder)
 

@@ -5,9 +5,9 @@
 #SBATCH --qos=normal          
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=50     
-#SBATCH --mem=200G             
-#SBATCH --time=12:00:00  
+#SBATCH --cpus-per-task=50     # Matches your N_runs=50 perfectly
+#SBATCH --mem=200G             # Ensure ~4G per process, 200G is great
+#SBATCH --time=2-00:00:00      # Increased to 48 hours to avoid mid-run timeouts
 
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1

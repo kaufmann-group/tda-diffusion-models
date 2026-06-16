@@ -21,7 +21,7 @@ def beta_1s(steps, L, skip, rates_matrix, r, max_edge_length):
 
 if __name__ == "__main__":
     steps = 1000000
-    skip = 100
+    skip = 1000
     N_runs = 50
 
     r = 1.5
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     rates_matrix = np.array([[0.0, 2.0, 2.0], [1.0, 0.0, 1.5], [1.0, 1.5, 0.0]], dtype=np.float64)
 
     sampled_times = np.arange(0, steps + 1, skip)
-    L_values = np.arange(60, 600, 60)
+    L_values = np.arange(120, 600, 15)
     saturation_times = []
 
     for L in L_values: 
