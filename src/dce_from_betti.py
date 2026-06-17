@@ -27,7 +27,8 @@ if __name__ == "__main__":
     r = 1.5
     max_edge_length = 3.0
 
-    rates_matrix = np.array([[0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [0.0, 0.0, 0.0]], dtype=np.float64)
+    # rates_matrix = np.array([[0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [0.0, 0.0, 0.0]], dtype=np.float64) # totally asymmetric 
+    rates_matrix = np.array([[0.0, 1.0, 1.0], [1.0, 0.0, 1.0], [1.0, 1.0, 0.0]], dtype=np.float64) # symmetric
 
     sampled_times = np.arange(0, steps + 1, skip)
     L_values = np.arange(120, 600, 15)
@@ -47,18 +48,6 @@ if __name__ == "__main__":
 
         print(f"L = {L}, saturation time = {tau}, saturation value = {sat_value}")
 
-        plt.figure(figsize=(8, 4))
-        plt.plot(sampled_times, beta_1_mean, alpha=0.35, label="raw ensemble mean")
-        plt.plot(sampled_times, beta_1_smooth, linewidth=2, label="smoothed ensemble mean")
-        plt.axvline(tau, linestyle="--", label=fr"$\tau = {tau:.0f}$")
-        plt.xlabel("monte carlo steps")
-        plt.ylabel(r"$\langle \beta_1(r,t) \rangle$")
-        plt.title(f"beta 1 relaxation, L={L}")
-        plt.legend()
-        plt.tight_layout()
-        plt.savefig(f"{git_root.git_root()}/data/path_projections_beta1_relaxations_v2/beta1_relaxation_L_{L}.png", dpi=300)
-        plt.close()
-
     saturation_times = np.array(saturation_times)
 
     z, intercept, log_L, log_tau = fit_dynamic_exponent(L_values, saturation_times)
@@ -76,4 +65,4 @@ if __name__ == "__main__":
     plt.legend(fontsize=13)
 
     plt.tight_layout()
-    plt.savefig(f"{git_root.git_root()}/data/path_projections_beta1_relaxations_v2/dynamic_exponent_beta1_log_fit.png", dpi=300)
+    plt.savefig(f"{git_root.git_root()}/data/symmetric_dce_betti1.png", dpi=300)
