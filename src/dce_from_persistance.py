@@ -30,7 +30,7 @@ if __name__ == "__main__":
     rates_matrix = np.array([[0.0, 1.0, 1.0], [1.0, 0.0, 1.0], [1.0, 1.0, 0.0]], dtype=np.float64) # symmetric
 
     sampled_times = np.arange(0, steps + 1, skip)
-    L_values = np.arange(120, 600, 15)
+    L_values = np.arange(120, 600, 6)
     saturation_times = []
 
     for L in L_values:
