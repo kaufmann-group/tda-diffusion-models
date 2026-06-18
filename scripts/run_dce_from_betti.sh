@@ -2,12 +2,11 @@
 #SBATCH --job-name=tda_multi_species
 #SBATCH --account=physics       
 #SBATCH --partition=cpu         
-#SBATCH --qos=standby         # changed temorarly since `squeue -A physics` is busy
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=50    
 #SBATCH --mem=200G            
-#SBATCH --time=04:00:00      # max allowed for standby
+#SBATCH --time=24:00:00
 
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
