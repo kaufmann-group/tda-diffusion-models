@@ -3,7 +3,8 @@ matplotlib
 scipy
 gudhi
 pybind11
-PyQt6
+ipywidgets
+ipympl
 ipykernel
 jupyter
 notebook

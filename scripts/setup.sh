@@ -28,7 +28,7 @@ esac
 
 pip install --upgrade pip
 pip install -r ./scripts/requirements.txt
-python -m ipykernel install --user --name=repo-env --display-name "Repository Environment"
+python -m ipykernel install --user --name=repo-env --display-name "TDA Repository Environment"
 
 # the only thing that works on the rcac server instead you could just brew install eigen and manually change the path in the make file
 rm -rf "$REPO/.eigen"
