@@ -1,6 +1,7 @@
+import os
+import git_root
 import numpy as np
 import gudhi as gd
-import git_root
 import matplotlib.pyplot as plt
 from concurrent.futures import ProcessPoolExecutor
 
@@ -34,8 +35,11 @@ if __name__ == "__main__":
     L_values = np.arange(120, 600, 6)
     saturation_times = []
 
+    slurm_cpus = int(os.environ.get("SLURM_CPUS_PER_TASK", "1"))
+    max_workers = min(N_runs, slurm_cpus)
+
     for L in L_values: 
-        with ProcessPoolExecutor(max_workers=N_runs) as executor: 
+        with ProcessPoolExecutor(max_workers=max_workers) as executor: 
             futures = [executor.submit(beta_1s, steps, L, skip, rates_matrix, r, max_edge_length) for _ in range(N_runs)] 
             results = [f.result() for f in futures] 
             
