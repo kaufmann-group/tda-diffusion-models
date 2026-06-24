@@ -875,7 +875,7 @@ PYBIND11_MODULE(msep, m)
                 int,
                 unsigned int,
                 bool>(),
-            py::arg("s"),
+            py::arg("dimension"),
             py::arg("density"),
             py::arg("rates_matrix"),
             py::arg("length"),
