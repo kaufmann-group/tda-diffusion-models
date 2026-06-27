@@ -1,0 +1,120 @@
+2026-06-26 22:36:31.744 [KernelNanny.5] Starting kernel nanny for engine 5, pid=1720287, nanny pid=1720509
+2026-06-26 22:36:31.745 [KernelNanny.8] Starting kernel nanny for engine 8, pid=1720285, nanny pid=1720512
+2026-06-26 22:36:31.746 [KernelNanny.10] Starting kernel nanny for engine 10, pid=1720289, nanny pid=1720514
+2026-06-26 22:36:31.744 [KernelNanny.5] Nanny watching parent pid 1720287.
+2026-06-26 22:36:31.746 [KernelNanny.8] Nanny watching parent pid 1720285.
+2026-06-26 22:36:31.746 [KernelNanny.10] Nanny watching parent pid 1720289.
+2026-06-26 22:36:31.750 [KernelNanny.11] Starting kernel nanny for engine 11, pid=1720295, nanny pid=1720515
+2026-06-26 22:36:31.751 [KernelNanny.0] Starting kernel nanny for engine 0, pid=1720305, nanny pid=1720504
+2026-06-26 22:36:31.752 [KernelNanny.13] Starting kernel nanny for engine 13, pid=1720299, nanny pid=1720517
+2026-06-26 22:36:31.753 [KernelNanny.4] Starting kernel nanny for engine 4, pid=1720307, nanny pid=1720508
+2026-06-26 22:36:31.754 [KernelNanny.9] Starting kernel nanny for engine 9, pid=1720291, nanny pid=1720513
+2026-06-26 22:36:31.754 [KernelNanny.3] Starting kernel nanny for engine 3, pid=1720301, nanny pid=1720507
+2026-06-26 22:36:31.754 [KernelNanny.1] Starting kernel nanny for engine 1, pid=1720303, nanny pid=1720505
+2026-06-26 22:36:31.751 [KernelNanny.11] Nanny watching parent pid 1720295.
+2026-06-26 22:36:31.751 [KernelNanny.0] Nanny watching parent pid 1720305.
+2026-06-26 22:36:31.752 [KernelNanny.13] Nanny watching parent pid 1720299.
+2026-06-26 22:36:31.753 [KernelNanny.4] Nanny watching parent pid 1720307.
+2026-06-26 22:36:31.754 [KernelNanny.9] Nanny watching parent pid 1720291.
+2026-06-26 22:36:31.754 [KernelNanny.3] Nanny watching parent pid 1720301.
+2026-06-26 22:36:31.754 [KernelNanny.1] Nanny watching parent pid 1720303.
+2026-06-26 22:36:31.758 [KernelNanny.2] Starting kernel nanny for engine 2, pid=1720297, nanny pid=1720506
+2026-06-26 22:36:31.759 [KernelNanny.2] Nanny watching parent pid 1720297.
+2026-06-26 22:36:31.762 [KernelNanny.21] Starting kernel nanny for engine 21, pid=1720293, nanny pid=1720525
+2026-06-26 22:36:31.764 [KernelNanny.6] Starting kernel nanny for engine 6, pid=1720298, nanny pid=1720510
+2026-06-26 22:36:31.764 [KernelNanny.18] Starting kernel nanny for engine 18, pid=1720308, nanny pid=1720522
+2026-06-26 22:36:31.764 [KernelNanny.16] Starting kernel nanny for engine 16, pid=1720300, nanny pid=1720520
+2026-06-26 22:36:31.765 [KernelNanny.14] Starting kernel nanny for engine 14, pid=1720306, nanny pid=1720518
+2026-06-26 22:36:31.765 [KernelNanny.12] Starting kernel nanny for engine 12, pid=1720294, nanny pid=1720516
+2026-06-26 22:36:31.765 [KernelNanny.17] Starting kernel nanny for engine 17, pid=1720286, nanny pid=1720521
+2026-06-26 22:36:31.765 [KernelNanny.7] Starting kernel nanny for engine 7, pid=1720288, nanny pid=1720511
+2026-06-26 22:36:31.763 [KernelNanny.21] Nanny watching parent pid 1720293.
+2026-06-26 22:36:31.767 [KernelNanny.20] Starting kernel nanny for engine 20, pid=1720292, nanny pid=1720524
+2026-06-26 22:36:31.768 [KernelNanny.15] Starting kernel nanny for engine 15, pid=1720296, nanny pid=1720519
+2026-06-26 22:36:31.765 [KernelNanny.7] Nanny watching parent pid 1720288.
+2026-06-26 22:36:31.765 [KernelNanny.17] Nanny watching parent pid 1720286.
+2026-06-26 22:36:31.765 [KernelNanny.12] Nanny watching parent pid 1720294.
+2026-06-26 22:36:31.765 [KernelNanny.6] Nanny watching parent pid 1720298.
+2026-06-26 22:36:31.765 [KernelNanny.16] Nanny watching parent pid 1720300.
+2026-06-26 22:36:31.765 [KernelNanny.14] Nanny watching parent pid 1720306.
+2026-06-26 22:36:31.765 [KernelNanny.18] Nanny watching parent pid 1720308.
+2026-06-26 22:36:31.769 [KernelNanny.23] Starting kernel nanny for engine 23, pid=1720302, nanny pid=1720527
+2026-06-26 22:36:31.767 [KernelNanny.20] Nanny watching parent pid 1720292.
+2026-06-26 22:36:31.770 [KernelNanny.19] Starting kernel nanny for engine 19, pid=1720290, nanny pid=1720523
+2026-06-26 22:36:31.768 [KernelNanny.15] Nanny watching parent pid 1720296.
+2026-06-26 22:36:31.770 [KernelNanny.23] Nanny watching parent pid 1720302.
+2026-06-26 22:36:31.771 [KernelNanny.19] Nanny watching parent pid 1720290.
+2026-06-26 22:36:31.777 [KernelNanny.22] Starting kernel nanny for engine 22, pid=1720304, nanny pid=1720526
+2026-06-26 22:36:31.777 [KernelNanny.22] Nanny watching parent pid 1720304.
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720285.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720287.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720291.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720305.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720289.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720297.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720303.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720301.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720295.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720307.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720299.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720293.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720288.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720294.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720286.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720298.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720296.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720306.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720292.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720300.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720290.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720304.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720308.log
+Sending logs to /home/dupreti/.ipython/profile_default/log/ipengine--1720302.log
+2026-06-27 05:36:06.737 [KernelNanny.8] Pipe closed, parent 1720285 has status: running
+2026-06-27 05:36:06.737 [KernelNanny.8] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.737 [KernelNanny.10] Pipe closed, parent 1720289 has status: running
+2026-06-27 05:36:06.737 [KernelNanny.10] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.737 [KernelNanny.5] Pipe closed, parent 1720287 has status: running
+2026-06-27 05:36:06.737 [KernelNanny.5] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.737 [KernelNanny.9] Pipe closed, parent 1720291 has status: running
+2026-06-27 05:36:06.737 [KernelNanny.9] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.751 [KernelNanny.0] Pipe closed, parent 1720305 has status: running
+2026-06-27 05:36:06.751 [KernelNanny.0] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.757 [KernelNanny.11] Pipe closed, parent 1720295 has status: running
+2026-06-27 05:36:06.757 [KernelNanny.2] Pipe closed, parent 1720297 has status: running
+2026-06-27 05:36:06.757 [KernelNanny.11] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.757 [KernelNanny.2] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.762 [KernelNanny.4] Pipe closed, parent 1720307 has status: running
+2026-06-27 05:36:06.762 [KernelNanny.4] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.762 [KernelNanny.1] Pipe closed, parent 1720303 has status: running
+2026-06-27 05:36:06.762 [KernelNanny.1] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.764 [KernelNanny.21] Pipe closed, parent 1720293 has status: running
+2026-06-27 05:36:06.764 [KernelNanny.21] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.764 [KernelNanny.13] Pipe closed, parent 1720299 has status: running
+2026-06-27 05:36:06.765 [KernelNanny.13] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.765 [KernelNanny.3] Pipe closed, parent 1720301 has status: running
+2026-06-27 05:36:06.765 [KernelNanny.3] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.819 [KernelNanny.19] Pipe closed, parent 1720290 has status: running
+2026-06-27 05:36:06.819 [KernelNanny.19] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.819 [KernelNanny.12] Pipe closed, parent 1720294 has status: running
+2026-06-27 05:36:06.819 [KernelNanny.12] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.819 [KernelNanny.20] Pipe closed, parent 1720292 has status: running
+2026-06-27 05:36:06.819 [KernelNanny.7] Pipe closed, parent 1720288 has status: running
+2026-06-27 05:36:06.819 [KernelNanny.20] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.820 [KernelNanny.7] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.826 [KernelNanny.15] Pipe closed, parent 1720296 has status: running
+2026-06-27 05:36:06.826 [KernelNanny.15] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.826 [KernelNanny.6] Pipe closed, parent 1720298 has status: running
+2026-06-27 05:36:06.826 [KernelNanny.6] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.827 [KernelNanny.17] Pipe closed, parent 1720286 has status: running
+2026-06-27 05:36:06.827 [KernelNanny.17] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.831 [KernelNanny.22] Pipe closed, parent 1720304 has status: running
+2026-06-27 05:36:06.832 [KernelNanny.22] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.833 [KernelNanny.14] Pipe closed, parent 1720306 has status: running
+2026-06-27 05:36:06.833 [KernelNanny.14] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.833 [KernelNanny.23] Pipe closed, parent 1720302 has status: running
+2026-06-27 05:36:06.833 [KernelNanny.23] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.833 [KernelNanny.16] Pipe closed, parent 1720300 has status: running
+2026-06-27 05:36:06.833 [KernelNanny.16] Notifying Hub that our parent has shut down
+2026-06-27 05:36:06.837 [KernelNanny.18] Pipe closed, parent 1720308 has status: running
+2026-06-27 05:36:06.838 [KernelNanny.18] Notifying Hub that our parent has shut down

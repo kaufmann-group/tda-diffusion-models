@@ -1,7 +1,9 @@
 import numpy as np
 import gudhi as gd
+from ripser import ripser
 
 from matplotlib.patches import Polygon
+
 
 
 """
@@ -109,39 +111,49 @@ def draw_rips_simplices(points, axes, d, max_dimension=2, show_labels=False):
     axes.set_aspect('equal')
 
 """
-computes H0 persistence from one normal-mode height function
-
-Input can be either:
-    heights: shape (L + 1,)
-or:
-    point_cloud: shape (L + 1, 2), where column 0 is x and column 1 is h_gamma(x)
-
-Returns the finite H0 persistences death - birth.
+Total finite H0 persistence of a point cloud.
 """
-def h0_persistence_normal_mode_height(normal_mode_height):
-    normal_mode_height = np.asarray(normal_mode_height, dtype=float)
 
-    if normal_mode_height.ndim == 2:
-        heights = normal_mode_height[:, 1]
-    else:
-        heights = normal_mode_height
+def h0_total_persistence(points):
+    if points.ndim != 2 or points.shape[0] < 2:
+        return 0.0
 
-    if heights.shape[0] < 2:
-        return np.array([])
+    result = ripser(points, maxdim=0)
+    H0 = result["dgms"][0]
 
-    cubical_complex = gd.CubicalComplex(top_dimensional_cells=heights)
-    cubical_complex.persistence()
+    births = H0[:, 0]
+    deaths = H0[:, 1]
 
-    h0 = cubical_complex.persistence_intervals_in_dimension(0)
+    finite = np.isfinite(births) & np.isfinite(deaths)
 
-    if h0.shape[0] > 0:
-        h0 = h0[np.isfinite(h0[:, 1])]
+    if not np.any(finite):
+        return 0.0
 
-    if h0.shape[0] == 0:
-        return np.array([])
+    pers = deaths[finite] - births[finite]
 
-    births = h0[:, 0]
-    deaths = h0[:, 1]
-    persistences = deaths - births
+    return float(np.sum(pers))
 
-    return persistences
+    """
+Convert 1D data into a point cloud of local spatial patches.
+"""
+def patch_point_cloud(h_profile, window, stride=1):
+    
+    h = np.asarray(h_profile, dtype=float)
+    h = h[np.isfinite(h)]
+
+    if len(h) < window:
+        return np.empty((0, window))
+
+    h = h - np.mean(h)
+
+    std = np.std(h)
+    if std > 1e-14:
+        h = h / std
+
+    points = []
+
+    for start in range(0, len(h) - window + 1, stride):
+        patch = h[start:start + window]
+        points.append(patch)
+
+    return np.asarray(points, dtype=float)

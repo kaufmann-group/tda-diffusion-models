@@ -1,13 +1,21 @@
-numpy 
-matplotlib
+# Computation Libraries
+numpy
 scipy
-gudhi
+Cython
 pybind11
-ipywidgets
-ipympl
-ipykernel
+
+# Display Libraries
 jupyter
 notebook
-git_root
-tqdm
+ipykernel
 ipyparallel
+ipywidgets
+ipympl
+matplotlib
+
+# Topological Data Analysis Libraries
+gudhi
+ripser
+
+# Utilities
+git_root
