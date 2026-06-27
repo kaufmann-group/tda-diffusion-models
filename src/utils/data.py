@@ -2,38 +2,59 @@ import numpy as np
 from scipy.signal import correlate, savgol_filter
 
 """
-gets the relaxation time.
+Calculates the relaxation time when C(t) crosses below a threshold.
 """
-def relaxation_time(C):
-    C = np.asarray(np.abs(C))
+
+import numpy as np
+
+def relaxation_time(C, times=None, threshold=None):
+    C = np.asarray(C) 
+    
+    if np.iscomplexobj(C):             
+        C = np.abs(C)
+        
+    C = C.astype(float)
+
+    C = np.asarray(C, dtype=float)
+    
+    if times is None:
+        C = np.abs(C)
+        if len(C) < 2 or C[0] <= 0 or not np.isfinite(C[0]):
+            return np.nan
+        C = C / C[0]
+        times = np.arange(len(C), dtype=float)
+    else:
+        times = np.asarray(times, dtype=float)
+
+    finite = np.isfinite(C) & np.isfinite(times)
+    C = C[finite]
+    times = times[finite]
 
     if len(C) < 2:
         return np.nan
 
-    # Normalize so C(0) = 1
-    if C[0] <= 0 or not np.isfinite(C[0]):
+    if threshold is None:
+        threshold = np.exp(-1)
+
+    below = np.where(C < threshold)[0]
+    if len(below) == 0:
         return np.nan
 
-    C = C / C[0]
+    i = below[0]
 
-    threshold = np.exp(-1)
+    if i == 0:
+        return float(times[0])
 
-    crossings = np.where((np.arange(len(C)) > 0) & (C < threshold))[0]
+    t0, t1 = times[i - 1], times[i]
+    c0, c1 = C[i - 1], C[i]
 
-    if len(crossings) == 0:
-        return np.nan
+    if np.isclose(c1, c0, atol=1e-14):
+        return float(t1)
 
-    i = crossings[0]
-
-    t0, t1 = i - 1, i
-    C0, C1 = C[t0], C[t1]
-
-    if C0 == C1:
-        return float(i)
-
-    tau = t0 + (threshold - C0) / (C1 - C0)
-
+    tau = t0 + (threshold - c0) * (t1 - t0) / (c1 - c0)
     return float(tau)
+
+
 
 """
 get the saturation time for noisy data

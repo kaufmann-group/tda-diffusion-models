@@ -1,5 +1,8 @@
 #!/bin/bash
-# Usage: ./script.sh <mem> <time> <cpus> <python_file>
+
+# runs files on slurm clusters 
+# Usage: ./run.sh <mem> <time> <cpus> <python_file>
+# Example: ./run.sh 48G 12:00:00 24 ../src/test.py
 
 REPO=$(git rev-parse --show-toplevel)
 PYTHON_FILE=$(realpath "$4")
