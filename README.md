@@ -6,10 +6,11 @@ This project relates to applying methods in Topological Data Analysis (TDA) to t
 
 - Simulated multi-species diffusion process given the swapping rates, length, number of species (dimension) and density of species.
 - Successfully extracted roughness exponent ($\alpha$), growth exponent ($\beta$) and the dynamical critical exponent ($z$) critical exponents from multi-species diffusion processes'.
+- Extracted dynamical critical exponent from H0 persistance of normal mode time series
 
 ## Current Goals
 
-- To extract dynamical critical exponent via topological data of multi-species diffusion processes' using TDA.
+- Try to extract dynamical critical exponent from other TDA varibles.
 
 ## References
 

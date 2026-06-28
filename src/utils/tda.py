@@ -133,7 +133,7 @@ def h0_total_persistence(points):
 
     return float(np.sum(pers))
 
-    """
+"""
 Convert 1D data into a point cloud of local spatial patches.
 """
 def patch_point_cloud(h_profile, window, stride=1):
