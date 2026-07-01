@@ -67,4 +67,4 @@ if __name__ == "__main__":
     plt.legend(fontsize=13)
 
     plt.tight_layout()
-    plt.savefig(f"{git_root.git_root()}/data/symmetric_dce_persistance.png", dpi=300)
+    plt.savefig(f"{git_root.git_root()}/data/archive/symmetric_dce_persistance.png", dpi=300)

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import os
 from concurrent.futures import ProcessPoolExecutor
 
-from utils import *
+from ..utils import *
 
 """
 convert a hydrodynamic normal mode height time series into an H0 persistence time series.
@@ -48,7 +48,6 @@ def single_run(args):
     patch_window = max(8, int(L) // patch_divisor)
 
     h0_series_1 = h0_time_series_from_mode(H, mode_index=0, patch_window=patch_window, patch_stride=patch_stride, tda_every=tda_every)
-
     h0_series_2 = h0_time_series_from_mode(H, mode_index=1, patch_window=patch_window, patch_stride=patch_stride, tda_every=tda_every)
 
     C1 = autocorrelation(h0_series_1)

@@ -157,3 +157,117 @@ def patch_point_cloud(h_profile, window, stride=1):
         points.append(patch)
 
     return np.asarray(points, dtype=float)
+
+"""
+Return finite positive persistence lifetimes d - b.
+"""
+def finite_lifetimes(diagram):
+    
+    if diagram is None or len(diagram) == 0:
+        return np.asarray([], dtype=float)
+
+    births = diagram[:, 0]
+    deaths = diagram[:, 1]
+
+    finite = np.isfinite(births) & np.isfinite(deaths)
+
+    lifetimes = deaths[finite] - births[finite]
+    lifetimes = lifetimes[np.isfinite(lifetimes)]
+    lifetimes = lifetimes[lifetimes > 0]
+
+    return lifetimes
+
+"""
+Maximum finite H0 persistence lifetime.
+"""
+def h0_max_persistence_from_points(points):
+    
+    result = ripser(points, maxdim=0)
+    dgm0 = result["dgms"][0]
+
+    lifetimes = finite_lifetimes(dgm0)
+
+    if len(lifetimes) == 0:
+        return 0.0
+
+    return float(np.max(lifetimes))
+
+"""
+Total finite H1 persistence.
+"""
+
+def h1_total_persistence_from_points(points):
+    
+    result = ripser(points, maxdim=1)
+    diagrams = result["dgms"]
+
+    if len(diagrams) < 2:
+        return 0.0
+
+    dgm1 = diagrams[1]
+
+    lifetimes = finite_lifetimes(dgm1)
+
+    if len(lifetimes) == 0:
+        return 0.0
+
+    return float(np.sum(lifetimes))
+
+def finite_lifetimes(diagram):
+    if diagram is None or len(diagram) == 0:
+        return np.asarray([], dtype=float)
+
+    births = diagram[:, 0]
+    deaths = diagram[:, 1]
+
+    finite = np.isfinite(births) & np.isfinite(deaths)
+
+    lifetimes = deaths[finite] - births[finite]
+    lifetimes = lifetimes[np.isfinite(lifetimes)]
+    lifetimes = lifetimes[lifetimes > 0]
+
+    return lifetimes
+
+def h1_entropy_from_points(points):
+    result = ripser(points, maxdim=1)
+    dgm1 = result["dgms"][1]
+
+    lifetimes = finite_lifetimes(dgm1)
+
+    if len(lifetimes) == 0:
+        return 0.0
+
+    total = np.sum(lifetimes)
+
+    if total <= 0:
+        return 0.0
+
+    p = lifetimes / total
+    p = p[p > 0]
+
+    return float(-np.sum(p * np.log(p)))
+
+def h0_beta_fixed_r_from_points(points, r=1.0):
+    result = ripser(points, maxdim=0)
+    dgm0 = result["dgms"][0]
+
+    if dgm0 is None or len(dgm0) == 0:
+        return 0.0
+
+    births = dgm0[:, 0]
+    deaths = dgm0[:, 1]
+
+    alive = (births <= r) & (r < deaths)
+
+    return float(np.sum(alive))
+
+def h1_num_persistent_from_points(points, eps=0.05):
+    result = ripser(points, maxdim=1)
+    dgm1 = result["dgms"][1]
+
+    lifetimes = finite_lifetimes(dgm1)
+
+    if len(lifetimes) == 0:
+        return 0.0
+
+    return float(np.sum(lifetimes > eps))
