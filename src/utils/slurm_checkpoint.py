@@ -4,7 +4,7 @@ import numpy as np
 
 
 def safe_name(name):
-    return (str(name).replace("/", "_").replace(" ", "_").replace(":", "_"))
+    return str(name).replace("/", "_").replace(" ", "_").replace(":", "_")
 
 """
 Simple checkpointing for jobs indexed by L.
@@ -16,7 +16,6 @@ Stores:
     results[L_index, output_index]
     done[L_index]
 """
-
 class LCheckpoint:
 
     def __init__(self, process_name, L_values, n_outputs=2, output_dir="data/slurm-jobs"):
@@ -30,7 +29,6 @@ class LCheckpoint:
         self.filename = os.path.join(self.output_dir, self.process_name + ".npz")
 
         self.results = np.full((len(self.L_values), self.n_outputs), np.nan, dtype=float)
-
         self.done = np.zeros(len(self.L_values), dtype=bool)
 
         self._load_if_exists()
@@ -112,7 +110,6 @@ class LCheckpoint:
     """
     Delete this checkpoint file.
     """
-
     def delete(self):
         if os.path.exists(self.filename):
             os.remove(self.filename)
@@ -125,7 +122,5 @@ class LCheckpoint:
     """
     Return True if all L jobs are complete.
     """
-
     def is_complete(self):
-        
         return bool(np.all(self.done))

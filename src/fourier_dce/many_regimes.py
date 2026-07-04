@@ -8,7 +8,7 @@ import git_root
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utils import *
+from ..utils import *
 
 def getzs(rates_matrix):
     tau1s = []

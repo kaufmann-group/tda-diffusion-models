@@ -20,3 +20,4 @@
 *.so
 *.out
 *.err
+*.egg-info/

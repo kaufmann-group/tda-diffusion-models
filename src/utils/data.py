@@ -125,7 +125,6 @@ def autocorrelation(x, max_lag=None):
 """
 fit the dynamical critical exponent
 """
-
 def fit_dynamic_exponent(L_values, saturation_times):
     L_values = np.asarray(L_values, dtype=float)
     saturation_times = np.asarray(saturation_times, dtype=float)
