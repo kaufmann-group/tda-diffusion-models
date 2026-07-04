@@ -18,8 +18,11 @@ else
     echo "Overleaf remote exists"
 fi
 
-python3 -m venv .venv
-source $REPO/.venv/bin/activate
+module load conda
+
+rm -rf .venv
+conda create --prefix .venv python=3.10 -y
+source activate "$REPO/.venv"
 
 case ":$PATH:" in
     *":$REPO/.venv/bin:"*) ;;
@@ -28,7 +31,10 @@ esac
 
 pip install --upgrade pip
 pip install -r ./scripts/requirements.txt
-python -m ipykernel install --user --name=repo-env --display-name "TDA Repository Environment"
+
+pip install -e .
+
+"$REPO/.venv/bin/python" -m ipykernel install --user --name=repo-env --display-name "TDA Diffusion Models Environment"
 
 # the only thing that works on the rcac server instead you could just brew install eigen and manually change the path in the make file
 rm -rf "$REPO/.eigen"
@@ -41,4 +47,4 @@ make -C src/utils/msep
 
 echo ""
 echo "Setup complete."
-echo "Activate the environment with: source .venv/bin/activate"
+echo "Activate the environment with: module load conda && source activate $REPO/.venv"
