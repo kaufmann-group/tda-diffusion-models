@@ -123,7 +123,7 @@ def autocorrelation(x, max_lag=None):
     return C
 
 """
-fit the dynamical critical exponent
+fit the dynamical critical exponent delete this 
 """
 def fit_dynamic_exponent(L_values, saturation_times):
     L_values = np.asarray(L_values, dtype=float)
@@ -137,3 +137,21 @@ def fit_dynamic_exponent(L_values, saturation_times):
     z, intercept = np.polyfit(log_L, log_tau, 1)
 
     return z, intercept, log_L, log_tau
+
+def fit_loglog(L_values, taus):
+    """Fit tau proportional to L to the power z."""
+    L_values = np.asarray(L_values, dtype=float)
+    taus = np.asarray(taus, dtype=float)
+
+    valid = np.isfinite(taus) & (taus > 0)
+
+    log_L = np.log(L_values[valid])
+    log_tau = np.log(taus[valid])
+
+    if len(log_L) < 2:
+        return log_L, log_tau, np.nan, np.full_like(log_L, np.nan)
+
+    z, intercept = np.polyfit(log_L, log_tau, 1)
+    fit = z * log_L + intercept
+
+    return log_L, log_tau, z, fit

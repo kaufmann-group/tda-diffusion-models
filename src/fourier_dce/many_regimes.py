@@ -73,4 +73,4 @@ if __name__ == "__main__":
     plt.tight_layout() 
     
 
-    plt.savefig(f"{git_root.git_root()}/data/timescaling.png", dpi=300)
+    plt.savefig(f"{git_root.git_root()}/data/fourier-dce/four_regimes.png", dpi=300)
