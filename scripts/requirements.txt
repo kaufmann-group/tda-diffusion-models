@@ -19,3 +19,5 @@ ripser
 
 # Utilities
 git_root
+cloudpickle
+snakeviz

@@ -14,9 +14,16 @@ if tmux has-session -t "$SESSION" 2>/dev/null; then
 fi
 
 echo "No existing tmux session named '$SESSION' found."
-echo "Starting Jupyter inside a new tmux session..."
-echo ""
-echo "After Jupyter starts, detach with: Ctrl+b, then d"
-echo ""
+echo "Starting Jupyter inside a new detached tmux session..."
 
-tmux new -s "$SESSION" "jupyter notebook --no-browser --port=$PORT"
+# Fix: Added -d to start the session in the background
+tmux new -d -s "$SESSION" "jupyter notebook --no-browser --port=$PORT"
+
+# Give Jupyter a couple of seconds to spin up
+sleep 3
+
+echo ""
+echo "Jupyter is now running in the background!"
+echo "To view the logs or grab the login token, run: tmux attach -t $SESSION"
+echo "To leave it running and hide it again, press: Ctrl+b, then d"
+echo ""

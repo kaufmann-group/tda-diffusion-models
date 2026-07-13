@@ -8,7 +8,7 @@ LOAD_PREVIOUS_SLURM_JOB = True
 
 if __name__ == "__main__":
     observable_name = "h0_total_persistence_from_points"
-    process_name = "h0_total_persistence_four_regimes"
+    process_name = "raw_projection_h0_total_persistence_four_regimes"
     output_filename = "h0_total_persistence_four_regimes.png"
     suptitle = r"$H_0$ Total Persistence Relaxation Time Scaling"
     load_previous_slurm_job = LOAD_PREVIOUS_SLURM_JOB
