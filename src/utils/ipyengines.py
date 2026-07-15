@@ -1,11 +1,19 @@
+import os
 import git_root
 import numpy as np
+import importlib
+import ipyparallel as ipp
+
+from src.utils import *
 
 """
 Create one engine task for every rates-matrix and run-index combination at one system size.
 """
-def make_tasks_for_L(L, observable_name, n_runs, n_samples, sample_every, patch_divisor, patch_stride, tda_every):
+def make_tasks_for_L(L, observable_name, n_runs, n_samples, sample_every, patch_divisor, patch_stride, tda_every, module_path="src.hydro_mode_tda_dce.dce_four_regime"):
     tasks = []
+
+    regime_module = importlib.import_module(module_path)
+    RATES_MATRICES = regime_module.RATES_MATRICES
 
     for rates_index, rates_matrix in enumerate(RATES_MATRICES):
         for run_id in range(n_runs):
@@ -39,7 +47,15 @@ def connect_to_engines(profile="default"):
 """
 Run the checkpointed four-regime calculation using one ipyparallel task per simulation run.
 """
-def run(observable_name, process_name, output_filename, suptitle=None, load_previous_slurm_job=True, profile="default", rc=None):
+def run(observable_name, process_name, output_filename, suptitle=None, load_previous_slurm_job=True, profile="default", rc=None, module_path="src.hydro_mode_tda_dce.dce_four_regime"):
+
+    regime_module = importlib.import_module(module_path)
+    
+    single_run = regime_module.single_run
+    RATES_MATRICES = regime_module.RATES_MATRICES
+    aggregate_results = regime_module.aggregate_results
+    plot_results = regime_module.plot_results
+
     L_values = np.arange(240, 600, 15)
 
     n_runs = 24

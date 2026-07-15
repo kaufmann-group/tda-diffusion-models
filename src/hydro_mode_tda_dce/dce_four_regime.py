@@ -1,5 +1,5 @@
 """
-Shared ipyparallel runner for measuring the dynamical critical exponent from TDA observables across four universality class regimes.
+measuring the dynamical critical exponent from TDA observables across four universality class regimes
 """
 
 import os
@@ -37,7 +37,7 @@ RATES_MATRICES = [
 RATES_TITLES = ["Both Modes KPZ", "One Mode Diffusive, One Mode KPZ", "One Mode KPZ, One Mode Diffusive", "Both Modes Diffusive"]
 
 """
-Convert one normal-mode height time series into one scalar TDA time series.
+convert one normal mode height time series into one scalar TDA time series
 """
 def tda_time_series_from_mode(H, mode_index, observable_name, patch_window, patch_stride=1, tda_every=1):
     import numpy as np
@@ -57,7 +57,7 @@ def tda_time_series_from_mode(H, mode_index, observable_name, patch_window, patc
     return series
 
 """
-Compute one simulation run for one system size, rates matrix, and run index.
+compute one simulation run for one system size, rates matrix, and run index
 """
 def single_run(args):
     import numpy as np
@@ -84,7 +84,7 @@ def single_run(args):
     return int(L), int(rates_index), int(run_id), float(tau_0), float(tau_1)
 
 """
-Average the independently computed relaxation times over all runs.
+average independently computed relaxation times over all runs
 """
 def aggregate_results(results, n_runs):
     row_values = []
