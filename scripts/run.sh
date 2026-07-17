@@ -3,7 +3,7 @@
 # Run a Python module through SLURM, optionally with an IPyParallel cluster.
 # usage:
 #   ./run.sh <mem> <time> <cpus> <python_file>
-#   ./run.sh 32G 168:00:00 38 ../src/hydro_mode_tda_dce/h1_beta_curve_area_four_regimes.py --start-ipyengines
+#   ./run.sh 64G 168:00:00 128 ../src/hydro_mode_tda_dce/h1_entropy_four_regime.py --start-ipyengines
 
 set -e
 
